@@ -1,8 +1,10 @@
-import unittest
 import _pywhispercpp as pw
 
+import unittest
+from unittest import TestCase
 
-class TestCAPI(unittest.TestCase):
+
+class TestCAPI(TestCase):
 
     model_file = './whisper.cpp/models/for-tests-ggml-tiny.en.bin'
 
