@@ -9,7 +9,7 @@ import importlib.metadata
 import logging
 from pathlib import Path
 from time import time
-from typing import Union, Callable
+from typing import Union, Callable, List
 import _pywhispercpp as pw
 import numpy as np
 from pydub import AudioSegment
@@ -88,7 +88,7 @@ class Model:
                    media: Union[str, np.ndarray],
                    n_processors: int = None,
                    new_segment_callback: Callable[[Segment], None] = None,
-                   **params) -> list[Segment]:
+                   **params) -> List[Segment]:
         """
         Transcribes the media provided as input and returns list of `Segment` objects.
         Accepts a media_file path (audio/video) or a raw numpy array.
@@ -126,7 +126,7 @@ class Model:
         return res
 
     @staticmethod
-    def _get_segments(ctx, start: int, end: int) -> list[Segment]:
+    def _get_segments(ctx, start: int, end: int) -> List[Segment]:
         """
         Helper function to get generated segments between `start` and `end`
 
