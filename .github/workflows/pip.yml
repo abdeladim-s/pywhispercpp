@@ -32,5 +32,8 @@ jobs:
     - name: Build and install
       run: pip install --verbose .[test]
 
+    - name: Install pytest
+      run: pip install pytest
+
     - name: Test
       run: python -m pytest
