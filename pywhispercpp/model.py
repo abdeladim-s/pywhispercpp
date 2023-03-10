@@ -62,13 +62,13 @@ class Model:
 
     def __init__(self, model: str = 'tiny', models_dir: str = None, log_level: int = logging.INFO, **params):
         """
-        :param model: The name of the model, one of the [AVAILABLE_MODELS](/#pywhispercpp.constants.AVAILABLE_MODELS),
+        :param model: The name of the model, one of the [AVAILABLE_MODELS](/pywhispercpp/#pywhispercpp.constants.AVAILABLE_MODELS),
                         (default to `tiny`), or a direct path to a `ggml` model.
         :param models_dir: The directory where the models are stored, or where they will be downloaded if they don't
-                            exist, default to [MODELS_DIR](/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
+                            exist, default to [MODELS_DIR](/pywhispercpp/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
         :param log_level: logging level, set to INFO by default
         :param params: keyword arguments for different whisper.cpp parameters,
-                        see [PARAMS_SCHEMA](/#pywhispercpp.constants.PARAMS_SCHEMA)
+                        see [PARAMS_SCHEMA](/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA)
         """
         # set logging level
         set_log_level(log_level)

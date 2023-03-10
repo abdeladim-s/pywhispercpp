@@ -41,7 +41,7 @@ class LiveStream:
     ```python
     from pywhispercpp.examples.livestream import LiveStream
 
-    url = "http://n03.radiojar.com/t2n88q0st5quv?rj-ttl=5&rj-tok=AAABhsR2u6MAYFxz69dJ6eQnww"  # VOA english
+    url = ""  # Make sure it is a direct stream URL
     ls = LiveStream(url=url, n_threads=4)
     ls.start()
     ```
