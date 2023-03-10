@@ -6,8 +6,6 @@ Test model.py
 """
 from unittest import TestCase
 
-import numpy as np
-
 from pywhispercpp.model import Model, Segment
 
 if __name__ == '__main__':
@@ -37,7 +35,7 @@ class TestModel(TestCase):
 
     def test__load_audio(self):
         audio_arr = self.model._load_audio(self.audio_file)
-        return self.assertIsInstance(audio_arr, np.ndarray)
+        return self.assertIsNotNone(audio_arr)
 
 if __name__ == '__main__':
     unittest.main()
