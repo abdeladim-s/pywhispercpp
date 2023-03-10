@@ -4,6 +4,7 @@
 """
 Test model.py
 """
+import unittest
 from unittest import TestCase
 
 from pywhispercpp.model import Model, Segment
@@ -13,7 +14,7 @@ if __name__ == '__main__':
 
 
 class TestModel(TestCase):
-    audio_file = '../whisper.cpp/samples/jfk.wav'
+    audio_file = './whisper.cpp/samples/jfk.wav'
     model = Model("tiny")
 
     def test_transcribe(self):
@@ -36,6 +37,7 @@ class TestModel(TestCase):
     def test__load_audio(self):
         audio_arr = self.model._load_audio(self.audio_file)
         return self.assertIsNotNone(audio_arr)
+
 
 if __name__ == '__main__':
     unittest.main()
