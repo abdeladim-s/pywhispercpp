@@ -64,11 +64,14 @@ scoop install ffmpeg
 
 2. Once ffmpeg is installed, install `pywhispercpp`
 
-```shell
-pip install pywhispercpp
-```
+[//]: # (```shell)
 
-Or install the latest dev version from github
+[//]: # (pip install pywhispercpp)
+
+[//]: # (```)
+
+[//]: # ()
+[//]: # (Or install the latest dev version from github)
 
 ```shell
 pip install git+https://github.com/abdeladim-s/pywhispercpp
