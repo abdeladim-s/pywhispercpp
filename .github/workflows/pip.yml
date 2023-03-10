@@ -33,5 +33,4 @@ jobs:
       run: pip install --verbose .[test]
 
     - name: Test
-      run: pip install pytest
       run: python -m pytest
