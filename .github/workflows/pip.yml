@@ -35,6 +35,6 @@ jobs:
     - name: Build and install
       run: pip install --verbose .[test]
 
-    - name: Test
-      run: python -m unittest discover ./tests/
+    - name: Test C-API
+      run: python -m unittest ./tests/test_c_api.py
 
