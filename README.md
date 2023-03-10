@@ -29,17 +29,15 @@ Supported platforms:
 
 # Table of contents
 <!-- TOC -->
-* [pywhispercpp](#pywhispercpp)
-* [Table of contents](#table-of-contents)
 * [Installation](#installation)
 * [Quick start](#quick-start)
 * [Examples](#examples)
   * [Main](#main)
   * [Assistant](#assistant)
   * [Recording](#recording)
-  * [Live Stream](#live-stream)
+  * [Live Stream Transcription](#live-stream-transcription)
 * [Advanced usage](#advanced-usage)
-* [Performance comparison with whisper.cpp](#performance-comparison-with-whispercpp)
+* [Discussions and contributions](#discussions-and-contributions)
 * [License](#license)
 <!-- TOC -->
 
