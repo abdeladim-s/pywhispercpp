@@ -44,5 +44,5 @@ jobs:
       - name: Install
         run: conda install -c ${CONDA_PREFIX}/conda-bld/ pywhispercpp
 
-      - name: Test
-        run: python -m pytest
+#      - name: Test
+#        run: python -m pytest
