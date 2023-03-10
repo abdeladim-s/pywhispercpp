@@ -142,6 +142,7 @@ setup(
     python_requires=">=3.7",
     packages=find_packages('.'),
     package_dir={'': '.'},
+    long_description_content_type="text/markdown",
     entry_points={
         'console_scripts': ['pwcpp=pywhispercpp.examples.main:main',
                             'pwcpp-assistant=pywhispercpp.examples.assistant:_main',
