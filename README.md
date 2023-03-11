@@ -3,8 +3,9 @@ Python bindings for [whisper.cpp](https://github.com/ggerganov/whisper.cpp) with
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-whisper.cpp is a
+whisper.cpp is:                       
 <blockquote>
+
 High-performance inference of [OpenAI's Whisper](https://github.com/openai/whisper) automatic speech recognition (ASR) model:
 
 - Plain C/C++ implementation without dependencies
@@ -215,8 +216,7 @@ from pywhispercpp.examples.assistant import Assistant
 my_assistant = Assistant(commands_callback=print, n_threads=8)
 my_assistant.start()
 ```
-Here we very simply set the `commands_callback` to a simple `print`
-but you can assign a custom callback that will get executed on every command:
+Here we set the `commands_callback` to a simple `print`, so the commands will just get printed on the screen.
 
 You can run this example from the command line as well
 
@@ -265,10 +265,10 @@ options:
                         Whisper.cpp model, default to tiny.en
 ```
 ## Live Stream Transcription
-This [example](https://github.com/abdeladim-s/pywhispercpp/blob/main/pywhispercpp/examples/livestream.py) is an attempt to transcribe a livestream in realtime.
-But the results are not quite satisfactory yet, the CPU jump quickly to 100% and I cannot use huge models on my descent machine :sweat_smile:
+This [example](https://github.com/abdeladim-s/pywhispercpp/blob/main/pywhispercpp/examples/livestream.py) is an attempt to transcribe a livestream in realtime, but the results are not quite satisfactory yet, the CPU jumps quickly to 100% and I cannot use huge models on my descent machine.
+(Or maybe I am doing something wrong!) :sweat_smile:
 
-If you have a powerful machine, give it a try, it might work :)
+If you have a powerful machine, give it a try.
 
 From python :
 ```python

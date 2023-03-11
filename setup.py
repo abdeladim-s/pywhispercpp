@@ -139,14 +139,20 @@ setup(
     cmdclass={"build_ext": CMakeBuild},
     zip_safe=False,
     # extras_require={"test": ["pytest>=6.0"]},
-    python_requires=">=3.7",
+    python_requires=">=3.8",
     packages=find_packages('.'),
     package_dir={'': '.'},
     long_description_content_type="text/markdown",
+    license='MIT',
     entry_points={
         'console_scripts': ['pwcpp=pywhispercpp.examples.main:main',
                             'pwcpp-assistant=pywhispercpp.examples.assistant:_main',
                             'pwcpp-livestream=pywhispercpp.examples.livestream:_main',
                             'pwcpp-recording=pywhispercpp.examples.recording:_main']
-    }
+    },
+    project_urls={
+        'Documentation': 'https://abdeladim-s.github.io/pywhispercpp/',
+        'Source': 'https://github.com/abdeladim-s/pywhispercpp',
+        'Tracker': 'https://github.com/abdeladim-s/pywhispercpp/issues',
+    },
 )
