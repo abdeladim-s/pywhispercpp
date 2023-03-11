@@ -89,6 +89,16 @@ for segment in segments:
     print(segment.text)
 ```
 
+You can also assign a custom `new_segment_callback`
+
+```python
+from pywhispercpp.model import Model
+
+model = Model('base.en', print_realtime=False, print_progress=False)
+segments = model.transcribe('file.mp3', new_segment_callback=print)
+```
+
+
 * The `ggml` model will be downloaded automatically.
 * You can pass any `whisper.cpp` [parameter](https://abdeladim-s.github.io/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA) as a keyword argument to the `Model` class or to the `transcribe` function.
 * Check the [Model](https://abdeladim-s.github.io/pywhispercpp/#pywhispercpp.model.Model) class documentation for more details.
