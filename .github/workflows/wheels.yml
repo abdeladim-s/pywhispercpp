@@ -5,7 +5,7 @@ on:
   pull_request:
   push:
     branches:
-     - main
+     - release
   release:
     types:
       - published
@@ -73,7 +73,7 @@ jobs:
         name: artifact
         path: dist
 
-    - uses: pypa/gh-action-pypi-publish@main
+    - uses: pypa/gh-action-pypi-publish@release/v1
       with:
         verbose: true
         password: ${{ secrets.PYPI_API_TOKEN }}
