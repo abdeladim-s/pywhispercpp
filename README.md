@@ -2,6 +2,8 @@
 Python bindings for [whisper.cpp](https://github.com/ggerganov/whisper.cpp) with a simple Pythonic API on top of it.
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![Wheels](https://github.com/abdeladim-s/pywhispercpp/actions/workflows/wheels.yml/badge.svg?branch=main&event=push)](https://github.com/abdeladim-s/pywhispercpp/actions/workflows/wheels.yml)
+[![PyPi version](https://badgen.net/pypi/v/pywhispercpp)](https://pypi.org/project/pywhispercpp/)
 
 whisper.cpp is:                       
 <blockquote>
@@ -65,14 +67,12 @@ scoop install ffmpeg
 
 2. Once ffmpeg is installed, install `pywhispercpp`
 
-[//]: # (```shell)
+```shell
+pip install pywhispercpp
+```
 
-[//]: # (pip install pywhispercpp)
 
-[//]: # (```)
-
-[//]: # ()
-[//]: # (Or install the latest dev version from github)
+Or install the latest dev version from GitHub
 
 ```shell
 pip install git+https://github.com/abdeladim-s/pywhispercpp
