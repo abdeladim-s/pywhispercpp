@@ -101,7 +101,7 @@ segments = model.transcribe('file.mp3', new_segment_callback=print)
 
 * The `ggml` model will be downloaded automatically.
 * You can pass any `whisper.cpp` [parameter](https://abdeladim-s.github.io/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA) as a keyword argument to the `Model` class or to the `transcribe` function.
-* The `transcribe` function takes any media file (audio/video), in any format.
+* The `transcribe` function accepts any media file (audio/video), in any format.
 * Check the [Model](https://abdeladim-s.github.io/pywhispercpp/#pywhispercpp.model.Model) class documentation for more details.
 
 # Examples
