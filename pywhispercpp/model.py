@@ -60,12 +60,18 @@ class Model:
 
     _new_segment_callback = None
 
-    def __init__(self, model: str = 'tiny', models_dir: str = None, log_level: int = logging.INFO, **params):
+    def __init__(self,
+                 model: str = 'tiny',
+                 models_dir: str = None,
+                 params_sampling_strategy: int = 0,
+                 log_level: int = logging.INFO,
+                 **params):
         """
         :param model: The name of the model, one of the [AVAILABLE_MODELS](/pywhispercpp/#pywhispercpp.constants.AVAILABLE_MODELS),
                         (default to `tiny`), or a direct path to a `ggml` model.
         :param models_dir: The directory where the models are stored, or where they will be downloaded if they don't
                             exist, default to [MODELS_DIR](/pywhispercpp/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
+        :param params_sampling_strategy: 0 -> GREEDY, else BEAM_SEARCH
         :param log_level: logging level, set to INFO by default
         :param params: keyword arguments for different whisper.cpp parameters,
                         see [PARAMS_SCHEMA](/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA)
@@ -78,7 +84,9 @@ class Model:
         else:
             self.model_path = utils.download_model(model, models_dir)
         self._ctx = None
-        self._params = None
+        self._sampling_strategy = pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY if params_sampling_strategy == 0 else \
+            pw.whisper_sampling_strategy.WHISPER_SAMPLING_BEAM_SEARCH
+        self._params = pw.whisper_full_default_params(self._sampling_strategy)
         # init the model
         self._init_model()
         # assign params
@@ -102,13 +110,13 @@ class Model:
 
         :return: List of transcription segments
         """
-        if type(media) is str:
+        if type(media) is np.ndarray:
+            audio = media
+        else:
             media_path = Path(media).absolute()
             if not media_path.exists():
                 raise FileNotFoundError(media)
             audio = self._load_audio(media_path)
-        else:
-            audio = media
         # update params if any
         self._set_params(params)
 

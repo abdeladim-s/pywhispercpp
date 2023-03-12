@@ -37,14 +37,6 @@ AVAILABLE_MODELS = ["tiny.en",
                     "large"]
 
 PARAMS_SCHEMA = {  # as exactly presented in whisper.cpp
-    'strategy': {
-        'type': int,
-        'description': "Available sampling strategies"
-                       "GreefyDecoder -> 0"
-                       "BeamSearchDecoder -> 1",
-        'options': [0, 1],
-        'default': 0
-    },
     'n_threads': {
             'type': int,
             'description': "Number of threads to allocate for the inference"
