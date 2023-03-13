@@ -10,7 +10,6 @@ import logging
 
 import pywhispercpp.constants as constants
 
-
 __version__ = importlib.metadata.version('pywhispercpp')
 
 __header__ = f"""
@@ -19,7 +18,6 @@ A simple Command Line Interface to test the package
 Version: {__version__}               
 ====================================================
 """
-
 
 from pywhispercpp.model import Model
 import pywhispercpp.utils as utils
@@ -47,9 +45,12 @@ def run(args):
     params = _get_params(args)
     logging.info(f"Running with params {params}")
     m = Model(model=args.model, **params)
+    logging.info(f"System info: n_threads = {m.get_params()['n_threads']} | Processors = {args.processors} "
+                 f"| {m.system_info()}")
     for file in args.media_file:
         logging.info(f"Processing file {file} ...")
         segs = m.transcribe(file)
+        m.print_timings()
         # output stuff
         if args.output_txt:
             logging.info(f"Saving result as a txt file ...")
