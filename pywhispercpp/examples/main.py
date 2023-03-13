@@ -49,7 +49,7 @@ def run(args):
                  f"| {m.system_info()}")
     for file in args.media_file:
         logging.info(f"Processing file {file} ...")
-        segs = m.transcribe(file)
+        segs = m.transcribe(file, n_processors=int(args.processors) if args.processors else None)
         m.print_timings()
         # output stuff
         if args.output_txt:
