@@ -1,4 +1,4 @@
-numpy~=1.24.2
+numpy
 sounddevice~=0.4.6
 webrtcvad~=2.0.10
 pydub~=0.25.1
