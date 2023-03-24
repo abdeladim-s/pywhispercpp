@@ -113,7 +113,7 @@ class Model:
         if type(media) is np.ndarray:
             audio = media
         else:
-            media_path = Path(media).absolute()
+            media_path = Path(media).resolve()
             if not media_path.exists():
                 raise FileNotFoundError(media)
             audio = self._load_audio(media_path)
