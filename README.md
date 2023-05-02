@@ -319,7 +319,7 @@ options:
 # Advanced usage
 * First check the [API documentation](https://abdeladim-s.github.io/pywhispercpp/) for more advanced usage.
 * If you are a more experienced user, you can access the [C-Style API](https://github.com/ggerganov/whisper.cpp/blob/master/whisper.h) directly, almost all functions from `whisper.h`
-are exposed with the binding module `_pywhispercpp`, for example:
+are exposed with the binding module `_pywhispercpp`.
 
 ```python
 import _pywhispercpp as pwcpp
