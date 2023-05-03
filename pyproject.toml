@@ -47,11 +47,3 @@ extend-ignore = [
   "E501",   # Line too long
 ]
 target-version = "py39"
-
-# dependencies
-[project]
-name = "pywhispercpp"
-dynamic = ["dependencies", "version", "readme"]
-
-[tool.setuptools.dynamic]
-dependencies = {file = ["requirements.txt"]}

@@ -131,7 +131,7 @@ long_description = (this_directory / "README.md").read_text()
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pywhispercpp",
-    version="1.0.7",
+    version="1.0.8",
     author="abdeladim-s",
     description="Python bindings for whisper.cpp",
     long_description=long_description,
@@ -155,4 +155,6 @@ setup(
         'Source': 'https://github.com/abdeladim-s/pywhispercpp',
         'Tracker': 'https://github.com/abdeladim-s/pywhispercpp/issues',
     },
+    install_requires=['numpy', "pydub", "requests", "tqdm", "platformdirs"],
+    extras_require={"examples": ["sounddevice", "webrtcvad"]},
 )
