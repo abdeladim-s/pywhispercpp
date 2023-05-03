@@ -71,6 +71,11 @@ scoop install ffmpeg
 pip install pywhispercpp
 ```
 
+If you want to use the examples, you will need to install extra dependencies
+
+```shell
+pip install pywhispercpp[examples]
+```
 
 Or install the latest dev version from GitHub
 
