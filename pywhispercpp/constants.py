@@ -155,6 +155,12 @@ PARAMS_SCHEMA = {  # as exactly presented in whisper.cpp
             'options': None,
             'default': 0
     },
+    'initial_prompt': {
+                'type': str,
+                'description': "Initial prompt, these are prepended to any existing text context from a previous call",
+                'options': None,
+                'default': None
+        },
     'prompt_tokens': {
             'type': Tuple,
             'description': "tokens to provide to the whisper decoder as initial prompt",
