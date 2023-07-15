@@ -14,8 +14,8 @@ from platformdirs import user_data_dir
 
 WHISPER_SAMPLE_RATE = _pwcpp.WHISPER_SAMPLE_RATE
 # MODELS URL MODELS_BASE_URL+ '/' + MODELS_PREFIX_URL+'-'+MODEL_NAME+'.bin'
-# example = "https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin"
-MODELS_BASE_URL = "https://huggingface.co/datasets/ggerganov/whisper.cpp"
+# example = "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.bin"
+MODELS_BASE_URL = "https://huggingface.co/ggerganov/whisper.cpp"
 MODELS_PREFIX_URL = "resolve/main/ggml"
 
 
