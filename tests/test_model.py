@@ -14,7 +14,7 @@ if __name__ == '__main__':
 
 
 class TestModel(TestCase):
-    audio_file = './whisper.cpp/samples/jfk.wav'
+    audio_file = '../whisper.cpp/samples/jfk.wav'
     model = Model("tiny")
 
     def test_transcribe(self):

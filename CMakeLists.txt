@@ -5,22 +5,12 @@ add_subdirectory(pybind11)
 add_subdirectory(whisper.cpp)
 
 # file (GLOB CPP_FILES "whisper.cpp/*.cpp" "whisper.cpp/examples/*.cpp")
-file (GLOB CPP_FILES "whisper.cpp/*.cpp")
-file (GLOB C_FILES "whisper.cpp/*.c")
-
-
-pybind11_add_module(_pywhispercpp
-	${CPP_FILES}
-	${C_FILES}
-	src/main.cpp
-)
+file (GLOB CPP_FILES "whisper.cpp/whisper.cpp")
+file (GLOB C_FILES "whisper.cpp/ggml.c")
+file (GLOB H_FILES "whisper.cpp/*.h" "src/*.h")
 
 # pybind11_add_module(pywhispercpp  src/main.cpp)
 
-# EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
-# define (VERSION_INFO) here.
-target_compile_definitions(_pywhispercpp
-                           PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 # ---------------------------------------------------------------------------------------------
 
 
@@ -163,3 +153,15 @@ endif()
 if (WHISPER_PERF)
     set(WHISPER_EXTRA_FLAGS ${WHISPER_EXTRA_FLAGS} -DGGML_PERF)
 endif()
+
+# -----------------
+pybind11_add_module(_pywhispercpp
+	${CPP_FILES}
+	${C_FILES}
+	src/main.cpp
+)
+
+# EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
+# define (VERSION_INFO) here.
+target_compile_definitions(_pywhispercpp
+                           PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
