@@ -80,7 +80,7 @@ class Model:
         set_log_level(log_level)
 
         if Path(model).is_file():
-            self.model_path = Path(model).absolute()
+            self.model_path = model
         else:
             self.model_path = utils.download_model(model, models_dir)
         self._ctx = None
