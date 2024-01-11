@@ -34,20 +34,23 @@ Supported platforms:
 # Table of contents
 <!-- TOC -->
 * [Installation](#installation)
+    * [PYPI](#pypi-)
+    * [From source](#from-source)
+    * [CoreML support](#coreml-support)
 * [Quick start](#quick-start)
 * [Examples](#examples)
   * [Main](#main)
   * [Assistant](#assistant)
-  * [Recording](#recording)
+  * [Recording](#recording-)
   * [Live Stream Transcription](#live-stream-transcription)
 * [Advanced usage](#advanced-usage)
 * [Discussions and contributions](#discussions-and-contributions)
 * [License](#license)
 <!-- TOC -->
 
-# Installation 
+# Installation
 
-1. Install [ffmpeg](https://ffmpeg.org/)
+First Install [ffmpeg](https://ffmpeg.org/)
 
  ```bash
  # on Ubuntu or Debian
@@ -66,6 +69,8 @@ sudo pacman -S ffmpeg
 scoop install ffmpeg
 ```
 
+### PYPI 
+
 2. Once ffmpeg is installed, install `pywhispercpp`
 
 ```shell
@@ -78,11 +83,44 @@ If you want to use the examples, you will need to install extra dependencies
 pip install pywhispercpp[examples]
 ```
 
-Or install the latest dev version from GitHub
+### From source
+You can install the latest dev version from GitHub:
 
 ```shell
 pip install git+https://github.com/abdeladim-s/pywhispercpp
 ```
+### CoreML support
+
+Thanks to [@tangm](https://github.com/tangm), using CoreML is now supported:
+
+To build and install, clone the repository and run the following commands:
+
+```shell
+export CMAKE_ARGS="-DWHISPER_COREML=1"
+python -m build --wheel # in this repository to build the wheel. Assumes you have installed build with pip install build
+pip install dist/<generated>.whl
+```
+
+Then download and convert the appropriate model using the original `whisper.cpp` repository, producing a `<model>.mlmodelc` directory.
+
+You can now verify if everything's working: 
+
+```python
+from pywhispercpp.model import Model
+
+model = Model('<model_path>/ggml-base.en.bin', n_threads=6)
+print(Model.system_info())  # and you should see COREML = 1
+```
+
+If successful, you should also see the following on your terminal:
+
+```shell 
+whisper_init_state: loading Core ML model from '<model_path>/ggml-base.en-encoder.mlmodelc'
+whisper_init_state: first run on a device may take a while ...
+whisper_init_state: Core ML model loaded
+```
+
+
 
 # Quick start
 
