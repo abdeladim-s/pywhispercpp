@@ -157,7 +157,7 @@ def _main():
     parser.add_argument('-ind', '--input_device', type=int, default=None,
                         help=f'Id of The input device (aka microphone)\n'
                              f'available devices {Assistant.available_devices()}')
-    parser.add_argument('-st', '--silence_threshold', default=16,
+    parser.add_argument('-st', '--silence_threshold', default=16, type=int,
                         help=f"he duration of silence after which the inference will be running, default to %(default)s")
     parser.add_argument('-bd', '--block_duration', default=30,
                         help=f"minimum time audio updates in ms, default to %(default)s")
