@@ -34,7 +34,9 @@ AVAILABLE_MODELS = ["tiny.en",
                     "medium.en",
                     "medium",
                     "large-v1",
-                    "large"]
+                    "large",
+                    "large-v3",
+                    ]
 
 PARAMS_SCHEMA = {  # as exactly presented in whisper.cpp
     'n_threads': {
