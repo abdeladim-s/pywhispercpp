@@ -131,7 +131,7 @@ long_description = (this_directory / "README.md").read_text()
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pywhispercpp",
-    version="1.1.4",
+    version="1.2.0",
     author="abdeladim-s",
     description="Python bindings for whisper.cpp",
     long_description=long_description,
