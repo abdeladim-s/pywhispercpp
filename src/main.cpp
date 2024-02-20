@@ -15,7 +15,7 @@
 #include <pybind11/functional.h>
 #include <pybind11/numpy.h>
 
-#include "../whisper.cpp/whisper.h"
+#include "whisper.h"
 
 
 #define STRINGIFY(x) #x
@@ -167,6 +167,14 @@ whisper_token whisper_token_beg_wrapper(struct whisper_context_wrapper * ctx_w){
 
 whisper_token whisper_token_lang_wrapper(struct whisper_context_wrapper * ctx_w, int lang_id){
     return whisper_token_lang(ctx_w->ptr, lang_id);
+}
+
+whisper_token whisper_token_translate_wrapper(struct whisper_context_wrapper * ctx_w){
+    return whisper_token_translate(ctx_w->ptr);
+}
+
+whisper_token whisper_token_transcribe_wrapper(struct whisper_context_wrapper * ctx_w){
+    return whisper_token_transcribe(ctx_w->ptr);
 }
 
 void whisper_print_timings_wrapper(struct whisper_context_wrapper * ctx_w){
@@ -343,7 +351,6 @@ PYBIND11_MODULE(_pywhispercpp, m) {
 
     m.attr("WHISPER_SAMPLE_RATE") = WHISPER_SAMPLE_RATE;
     m.attr("WHISPER_N_FFT") = WHISPER_N_FFT;
-    m.attr("WHISPER_N_MEL") = WHISPER_N_MEL;
     m.attr("WHISPER_HOP_LENGTH") = WHISPER_HOP_LENGTH;
     m.attr("WHISPER_CHUNK_SIZE") = WHISPER_CHUNK_SIZE;
 
@@ -446,8 +453,8 @@ PYBIND11_MODULE(_pywhispercpp, m) {
     m.def("whisper_token_beg", &whisper_token_beg_wrapper);
     m.def("whisper_token_lang", &whisper_token_lang_wrapper);
 
-    m.def("whisper_token_translate", &whisper_token_translate);
-    m.def("whisper_token_transcribe", &whisper_token_transcribe);
+    m.def("whisper_token_translate", &whisper_token_translate_wrapper);
+    m.def("whisper_token_transcribe", &whisper_token_transcribe_wrapper);
 
     m.def("whisper_print_timings", &whisper_print_timings_wrapper);
     m.def("whisper_reset_timings", &whisper_reset_timings_wrapper);
