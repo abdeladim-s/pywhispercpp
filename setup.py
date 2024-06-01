@@ -123,6 +123,8 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
 
+        self.copy_extensions_to_source()
+
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
         # Copy the shared library to the lib folder
