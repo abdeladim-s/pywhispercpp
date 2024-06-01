@@ -129,9 +129,12 @@ class CMakeBuild(build_ext):
         so_files = os.path.join(self.build_lib, '*.so')
         dll_files = os.path.join(self.build_lib, '*.dll')
         shared_libs = glob(so_files) + glob(dll_files)
+        dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
+        if(not dest_folder.resolve().exists()):
+            dest_folder.mkdir(parents=True)
         for file_path in shared_libs:
             filename = os.path.basename(file_path)
-            self.copy_file(file_path, (Path.cwd() / 'pywhispercpp' / 'lib' / filename).resolve())
+            self.copy_file(file_path, (dest_folder / filename).resolve())
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
