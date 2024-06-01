@@ -2,6 +2,7 @@ import os
 import re
 import subprocess
 import sys
+from glob import glob
 from pathlib import Path
 
 from setuptools import Extension, setup, find_packages
@@ -122,6 +123,15 @@ class CMakeBuild(build_ext):
             ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
 
+    def copy_extensions_to_source(self):
+        super().copy_extensions_to_source()
+        # Copy the shared library to the lib folder
+        so_files = os.path.join(self.build_lib, '*.so')
+        dll_files = os.path.join(self.build_lib, '*.dll')
+        shared_libs = glob(so_files) + glob(dll_files)
+        for file_path in shared_libs:
+            filename = os.path.basename(file_path)
+            self.copy_file(file_path, (Path.cwd() / 'pywhispercpp' / 'lib' / filename).resolve())
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
@@ -142,6 +152,8 @@ setup(
     python_requires=">=3.8",
     packages=find_packages('.'),
     package_dir={'': '.'},
+    include_package_data=True,
+    package_data={'': ['./lib/*']},
     long_description_content_type="text/markdown",
     license='MIT',
     entry_points={
