@@ -116,6 +116,10 @@ class CMakeBuild(build_ext):
         if not build_temp.exists():
             build_temp.mkdir(parents=True)
 
+        for key, value in os.environ.items():
+            if('WHISPER' in key):
+                cmake_args.append(f'-D{key}={value}')
+
         subprocess.run(
             ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
         )
