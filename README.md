@@ -89,6 +89,14 @@ You can install the latest dev version from GitHub:
 ```shell
 pip install git+https://github.com/abdeladim-s/pywhispercpp
 ```
+
+### NVIDIA GPU support
+1. Make sure you have `cuda` installed.
+2. Install the package with CUDA support:
+
+```shell
+GGML_CUDA=1 pip install git+https://github.com/abdeladim-s/pywhispercpp
+```
 ### CoreML support
 
 Thanks to [@tangm](https://github.com/tangm), using CoreML is now supported:
