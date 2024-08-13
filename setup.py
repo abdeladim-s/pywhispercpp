@@ -117,8 +117,7 @@ class CMakeBuild(build_ext):
             build_temp.mkdir(parents=True)
 
         for key, value in os.environ.items():
-            if('WHISPER' in key):
-                cmake_args.append(f'-D{key}={value}')
+            cmake_args.append(f'-D{key}={value}')
 
         subprocess.run(
             ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
@@ -132,8 +131,10 @@ class CMakeBuild(build_ext):
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
         # Copy the shared library to the lib folder
-        so_files = os.path.join(self.build_lib, '*.so')
-        dll_files = os.path.join(self.build_lib, '*.dll')
+        ext_fullpath = Path.cwd() / self.get_ext_fullpath(self.extensions[0].name)  # type: ignore[no-untyped-call]
+        extdir = ext_fullpath.parent.resolve()
+        so_files = os.path.join(extdir, '*.so')
+        dll_files = os.path.join(extdir, '*.dll')
         shared_libs = glob(so_files) + glob(dll_files)
         dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
         if(not dest_folder.resolve().exists()):
