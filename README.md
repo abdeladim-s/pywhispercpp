@@ -87,7 +87,9 @@ pip install pywhispercpp[examples]
 You can install the latest dev version from GitHub:
 
 ```shell
-pip install git+https://github.com/abdeladim-s/pywhispercpp
+git clone --recursive https://github.com/abdeladim-s/pywhispercpp
+cd pywhispercpp
+pip install .
 ```
 
 ### NVIDIA GPU support
@@ -95,7 +97,9 @@ pip install git+https://github.com/abdeladim-s/pywhispercpp
 2. Install the package with CUDA support:
 
 ```shell
-GGML_CUDA=1 pip install git+https://github.com/abdeladim-s/pywhispercpp
+git clone --recursive https://github.com/abdeladim-s/pywhispercpp
+cd pywhispercpp
+WHISPER_CUDA=1 pip install .
 ```
 ### CoreML support
 
