@@ -134,8 +134,9 @@ class CMakeBuild(build_ext):
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(self.extensions[0].name)  # type: ignore[no-untyped-call]
         extdir = ext_fullpath.parent.resolve()
         so_files = os.path.join(extdir, '*.so')
-        dll_files = os.path.join(extdir, '*.dll')
-        shared_libs = glob(so_files) + glob(dll_files)
+        pyd_files = os.path.join(extdir, '*.pyd')
+        dll_files = os.path.join(self.build_temp, 'bin', 'Release', '*.dll')
+        shared_libs = glob(so_files) + glob(dll_files) + glob(pyd_files)
         dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
         if(not dest_folder.resolve().exists()):
             dest_folder.mkdir(parents=True)
