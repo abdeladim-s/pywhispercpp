@@ -113,6 +113,18 @@ python -m build --wheel # in this repository to build the wheel. Assumes you hav
 pip install dist/<generated>.whl
 ```
 
+### Vulkan support
+
+Thanks to [@thewh1teagle](https://github.com/thewh1teagle)
+
+To build and install, clone the repository and run the following commands:
+
+```shell
+export CMAKE_ARGS="-DGGML_VULKAN=1"
+python -m build --wheel # in this repository to build the wheel. Assumes you have installed build with pip install build
+pip install dist/<generated>.whl
+```
+
 Then download and convert the appropriate model using the original `whisper.cpp` repository, producing a `<model>.mlmodelc` directory.
 
 You can now verify if everything's working: 
