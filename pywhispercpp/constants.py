@@ -154,14 +154,6 @@ PARAMS_SCHEMA = {  # as exactly presented in whisper.cpp
             'options': None,
             'default': 0
     },
-    # [EXPERIMENTAL] speed-up techniques
-    # note: these can significantly reduce the quality of the output
-    'speed_up': {
-            'type': bool,
-            'description': "speed-up the audio by 2x using Phase Vocoder",
-            'options': None,
-            'default': False
-    },
     'audio_ctx': {
             'type': int,
             'description': "overwrite the audio context size (0 = use default)",

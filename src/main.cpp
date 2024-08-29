@@ -90,17 +90,6 @@ int whisper_pcm_to_mel_wrapper(
     return whisper_pcm_to_mel(ctx->ptr, samples_ptr, n_samples, n_threads);
 };
 
-int whisper_pcm_to_mel_phase_vocoder_wrapper(
-        struct whisper_context_wrapper* ctx,
-        py::array_t<float> samples,
-        int   n_samples,
-        int   n_threads){
-    py::buffer_info buf = samples.request();
-    float *samples_ptr = static_cast<float *>(buf.ptr);
-    return whisper_pcm_to_mel_phase_vocoder(ctx->ptr, samples_ptr, n_samples, n_threads);
-
-};
-
 int whisper_set_mel_wrapper(
         struct whisper_context_wrapper * ctx,
         py::array_t<float> data,
@@ -388,9 +377,6 @@ PYBIND11_MODULE(_pywhispercpp, m) {
     m.def("whisper_pcm_to_mel", &whisper_pcm_to_mel_wrapper, "Convert RAW PCM audio to log mel spectrogram.\n"
                                                              "The resulting spectrogram is stored inside the provided whisper context.\n"
                                                              "Returns 0 on success");
-    m.def("whisper_pcm_to_mel_phase_vocoder", &whisper_pcm_to_mel_phase_vocoder_wrapper, "Convert RAW PCM audio to log mel spectrogram but applies a Phase Vocoder to speed up the audio x2. \n"
-                                                                                        "The resulting spectrogram is stored inside the provided whisper context.\n"
-                                                                                        "Returns 0 on success");
 
     m.def("whisper_set_mel", &whisper_set_mel_wrapper, " This can be used to set a custom log mel spectrogram inside the provided whisper context.\n"
                                                         "Use this instead of whisper_pcm_to_mel() if you want to provide your own log mel spectrogram.\n"
@@ -490,7 +476,6 @@ PYBIND11_MODULE(_pywhispercpp, m) {
         .def_readwrite("max_len", &whisper_full_params::max_len)
         .def_readwrite("split_on_word", &whisper_full_params::split_on_word)
         .def_readwrite("max_tokens", &whisper_full_params::max_tokens)
-        .def_readwrite("speed_up", &whisper_full_params::speed_up)
         .def_readwrite("audio_ctx", &whisper_full_params::audio_ctx)
         .def_readwrite("initial_prompt", &whisper_full_params::initial_prompt)
         .def_readwrite("prompt_tokens", &whisper_full_params::prompt_tokens)
