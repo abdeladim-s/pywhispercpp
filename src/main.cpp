@@ -490,7 +490,6 @@ PYBIND11_MODULE(_pywhispercpp, m) {
         .def_readwrite("max_len", &whisper_full_params::max_len)
         .def_readwrite("split_on_word", &whisper_full_params::split_on_word)
         .def_readwrite("max_tokens", &whisper_full_params::max_tokens)
-        .def_readwrite("speed_up", &whisper_full_params::speed_up)
         .def_readwrite("audio_ctx", &whisper_full_params::audio_ctx)
         .def_readwrite("initial_prompt", &whisper_full_params::initial_prompt)
         .def_readwrite("prompt_tokens", &whisper_full_params::prompt_tokens)

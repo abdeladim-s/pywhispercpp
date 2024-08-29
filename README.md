@@ -180,7 +180,7 @@ usage: pwcpp [-h] [-m MODEL] [--version] [--processors PROCESSORS] [-otxt] [-ovt
              [--translate TRANSLATE] [--no_context NO_CONTEXT] [--single_segment SINGLE_SEGMENT] [--print_special PRINT_SPECIAL]
              [--print_progress PRINT_PROGRESS] [--print_realtime PRINT_REALTIME] [--print_timestamps PRINT_TIMESTAMPS]
              [--token_timestamps TOKEN_TIMESTAMPS] [--thold_pt THOLD_PT] [--thold_ptsum THOLD_PTSUM] [--max_len MAX_LEN]
-             [--split_on_word SPLIT_ON_WORD] [--max_tokens MAX_TOKENS] [--speed_up SPEED_UP] [--audio_ctx AUDIO_CTX]
+             [--split_on_word SPLIT_ON_WORD] [--max_tokens MAX_TOKENS] [--audio_ctx AUDIO_CTX]
              [--prompt_tokens PROMPT_TOKENS] [--prompt_n_tokens PROMPT_N_TOKENS] [--language LANGUAGE] [--suppress_blank SUPPRESS_BLANK]
              [--suppress_non_speech_tokens SUPPRESS_NON_SPEECH_TOKENS] [--temperature TEMPERATURE] [--max_initial_ts MAX_INITIAL_TS]
              [--length_penalty LENGTH_PENALTY] [--temperature_inc TEMPERATURE_INC] [--entropy_thold ENTROPY_THOLD]
@@ -234,7 +234,6 @@ options:
                         split on word rather than on token (when used with max_len)
   --max_tokens MAX_TOKENS
                         max tokens per segment (0 = no limit)
-  --speed_up SPEED_UP   speed-up the audio by 2x using Phase Vocoder
   --audio_ctx AUDIO_CTX
                         overwrite the audio context size (0 = use default)
   --prompt_tokens PROMPT_TOKENS

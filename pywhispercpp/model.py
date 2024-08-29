@@ -52,7 +52,7 @@ class Model:
     Example usage.
     ```python
     model = Model('base.en', n_threads=6)
-    segments = model.transcribe('file.mp3', speed_up=True)
+    segments = model.transcribe('file.mp3')
     for segment in segments:
         print(segment.text)
     ```
