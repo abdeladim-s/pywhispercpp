@@ -133,7 +133,7 @@ class CMakeBuild(build_ext):
         # Copy the shared library to the lib folder
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(self.extensions[0].name)  # type: ignore[no-untyped-call]
         extdir = ext_fullpath.parent.resolve()
-        so_files = os.path.join(extdir, '*.so')
+        so_files = os.path.join(extdir, '*.so*')
         pyd_files = os.path.join(extdir, '*.pyd')
         cfg = "Debug" if self.debug else "Release"
         dll_files = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg, "*.dll")
