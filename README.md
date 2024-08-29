@@ -105,45 +105,25 @@ WHISPER_CUDA=1 pip install .
 
 Thanks to [@tangm](https://github.com/tangm), using CoreML is now supported:
 
-To build and install, clone the repository and run the following commands:
+Clone the repository and install the package with `WHISPER_COREML=1`:
 
 ```shell
-export CMAKE_ARGS="-DWHISPER_COREML=1"
-python -m build --wheel # in this repository to build the wheel. Assumes you have installed build with pip install build
-pip install dist/<generated>.whl
+git clone --recursive https://github.com/abdeladim-s/pywhispercpp
+cd pywhispercpp
+WHISPER_COREML=1 pip install .
 ```
 
 ### Vulkan support
 
 Thanks to [@thewh1teagle](https://github.com/thewh1teagle)
 
-To build and install, clone the repository and run the following commands:
+Clone the repository and install the package with `GGML_VULKAN=1`:
 
 ```shell
-export CMAKE_ARGS="-DGGML_VULKAN=1"
-python -m build --wheel # in this repository to build the wheel. Assumes you have installed build with pip install build
-pip install dist/<generated>.whl
+git clone --recursive https://github.com/abdeladim-s/pywhispercpp
+cd pywhispercpp
+GGML_VULKAN=1 pip install .
 ```
-
-Then download and convert the appropriate model using the original `whisper.cpp` repository, producing a `<model>.mlmodelc` directory.
-
-You can now verify if everything's working: 
-
-```python
-from pywhispercpp.model import Model
-
-model = Model('<model_path>/ggml-base.en.bin', n_threads=6)
-print(Model.system_info())  # and you should see COREML = 1
-```
-
-If successful, you should also see the following on your terminal:
-
-```shell 
-whisper_init_state: loading Core ML model from '<model_path>/ggml-base.en-encoder.mlmodelc'
-whisper_init_state: first run on a device may take a while ...
-whisper_init_state: Core ML model loaded
-```
-
 
 
 # Quick start
