@@ -273,6 +273,7 @@ class Model:
         sound = AudioSegment.from_file(media_file_path)
         sound = sound.set_frame_rate(constants.WHISPER_SAMPLE_RATE).set_channels(1)
         arr = np.array(sound.get_array_of_samples()).T.astype(np.float32)
+        arr /= np.iinfo(np.int16).max
         return arr
 
     def __del__(self):
