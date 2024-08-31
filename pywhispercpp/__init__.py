@@ -10,5 +10,5 @@ libs = glob(os.path.join(os.path.dirname(__file__), 'lib/*'))
 if os.name == 'nt':
     os.add_dll_directory(os.path.join(os.path.dirname(__file__), 'lib'))
 
-for file in  libs:
+for file in ggml_libs + libs:
     ctypes.CDLL(os.path.join(os.path.dirname(__file__), 'lib', file))
