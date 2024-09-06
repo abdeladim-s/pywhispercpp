@@ -179,6 +179,6 @@ setup(
         'Source': 'https://github.com/abdeladim-s/pywhispercpp',
         'Tracker': 'https://github.com/abdeladim-s/pywhispercpp/issues',
     },
-    install_requires=['numpy', "pydub", "requests", "tqdm", "platformdirs"],
+    install_requires=['numpy', "requests", "tqdm", "platformdirs"],
     extras_require={"examples": ["sounddevice", "webrtcvad"]},
 )
