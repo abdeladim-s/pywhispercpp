@@ -135,11 +135,12 @@ class CMakeBuild(build_ext):
         extdir = ext_fullpath.parent.resolve()
         so_files = os.path.join(extdir, '*.so*')
         pyd_files = os.path.join(extdir, '*.pyd')
+        dylib_files = os.path.join(extdir, '*.dylib')
         cfg = "Debug" if self.debug else "Release"
         dll_files = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg, "*.dll")
-        shared_libs = glob(so_files) + glob(dll_files) + glob(pyd_files)
+        shared_libs = glob(so_files) + glob(dll_files) + glob(pyd_files) + glob(dylib_files)
         dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
-        if(not dest_folder.resolve().exists()):
+        if not dest_folder.resolve().exists():
             dest_folder.mkdir(parents=True)
         for file_path in shared_libs:
             filename = os.path.basename(file_path)
