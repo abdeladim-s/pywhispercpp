@@ -261,7 +261,8 @@ class Model:
         n = pw.whisper_full_n_segments(ctx)
         start = n - n_new
         res = Model._get_segments(ctx, start, n)
-        Model._new_segment_callback(res)
+        for segment in res:
+            Model._new_segment_callback(segment)
 
     @staticmethod
     def _load_audio(media_file_path: str) -> np.array:
