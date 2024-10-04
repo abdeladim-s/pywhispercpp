@@ -4,6 +4,7 @@ import subprocess
 import sys
 from glob import glob
 from pathlib import Path
+import shutil
 
 from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
@@ -130,20 +131,24 @@ class CMakeBuild(build_ext):
 
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
-        # Copy the shared library to the lib folder
+        # Copy the shared library to the package folder
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(self.extensions[0].name)  # type: ignore[no-untyped-call]
         extdir = ext_fullpath.parent.resolve()
-        so_files = os.path.join(extdir, '*.so*')
-        pyd_files = os.path.join(extdir, '*.pyd')
+        so_files = glob(os.path.join(extdir, '*.so*'))
+        pyd_files = glob(os.path.join(extdir, '*.pyd'))
         cfg = "Debug" if self.debug else "Release"
-        dll_files = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg, "*.dll")
-        shared_libs = glob(so_files) + glob(dll_files) + glob(pyd_files)
-        dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
-        if(not dest_folder.resolve().exists()):
+        dll_files = glob(os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg, "*.dll"))
+        
+        # Add the built library to the list of files to copy
+        built_lib = glob(os.path.join(self.build_lib, '**', '_pywhispercpp*.pyd'), recursive=True)
+        
+        shared_libs = so_files + dll_files + pyd_files + built_lib
+        dest_folder = Path.cwd() / 'pywhispercpp'
+        if not dest_folder.exists():
             dest_folder.mkdir(parents=True)
         for file_path in shared_libs:
             filename = os.path.basename(file_path)
-            self.copy_file(file_path, (dest_folder / filename).resolve())
+            shutil.copy2(file_path, dest_folder / filename)
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
@@ -165,7 +170,7 @@ setup(
     packages=find_packages('.'),
     package_dir={'': '.'},
     include_package_data=True,
-    package_data={'pywhispercpp': ['lib/*']},
+    package_data={'pywhispercpp': ['*.so*', '*.pyd', '*.dll']},
     long_description_content_type="text/markdown",
     license='MIT',
     entry_points={
