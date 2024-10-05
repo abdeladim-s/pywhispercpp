@@ -6,7 +6,9 @@ from glob import glob
 ggml_libs = glob(os.path.join(os.path.dirname(__file__), '*ggml*'))
 libs = glob(os.path.join(os.path.dirname(__file__), '*whisper*'))
 
-os.add_dll_directory(os.path.dirname(__file__))
+# add the directory to the library path
+if hasattr(os, 'add_dll_directory'):
+    os.add_dll_directory(os.path.dirname(__file__))
 
 for file in ggml_libs + libs:
     ctypes.CDLL(os.path.join(os.path.dirname(__file__), file))

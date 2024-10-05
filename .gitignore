@@ -145,5 +145,6 @@ dmypy.json
 .pyre/
 
 
-pywhispercpp/ggml.dll
-pywhispercpp/whisper.dll
+pywhispercpp/*.dll
+pywhispercpp/*.so.*
+pywhispercpp/*.dylib
