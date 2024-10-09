@@ -18,6 +18,19 @@ class TestCAPI(TestCase):
     def test_whisper_lang_id(self):
         return self.assertEqual(pw.whisper_lang_id('en'), 0)
 
+    def test_whisper_full_params_language_set_to_de(self):
+        params = pw.whisper_full_params()
+        params.language = 'de'
+        return self.assertEqual(params.language, 'de')
+    
+    def test_whisper_full_params_language_set_to_german(self):
+        """breaks malloc free /error"""
+        params = pw.whisper_full_params()
+        params.language = 'german'
+        return self.assertEqual(params.language, 'german')
+
+    def test_whisper_lang_id(self):
+        return self.assertEqual(pw.whisper_lang_id('en'), 0)
     def test_whisper_full_params(self):
         params = pw.whisper_full_params()
         return self.assertIsInstance(params.n_threads, int)
