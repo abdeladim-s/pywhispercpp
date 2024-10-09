@@ -27,6 +27,14 @@ class TestCAPI(TestCase):
         params = pw.whisper_full_params()
         params.language = 'german'
         return self.assertEqual(params.language, 'de')
+    
+    def test_whisper_full_params_context(self):    
+        params = pw.whisper_full_params()
+        prompt = "A" + " test"
+        params.initial_prompt = prompt
+        print("Params Prompt: ", params.initial_prompt)
+        del prompt
+        return self.assertEqual(params.initial_prompt, "A test")
   
     def test_whisper_lang_id(self):
         return self.assertEqual(pw.whisper_lang_id('en'), 0)
