@@ -27,6 +27,8 @@ __license__ = "MIT"
 __version__ = importlib.metadata.version('pywhispercpp')
 
 
+logger = logging.getLogger(__name__)
+
 class Segment:
     """
     A small class representing a transcription segment
@@ -67,7 +69,6 @@ class Model:
                  model: str = 'tiny',
                  models_dir: str = None,
                  params_sampling_strategy: int = 0,
-                 log_level: int = logging.INFO,
                  **params):
         """
         :param model: The name of the model, one of the [AVAILABLE_MODELS](/pywhispercpp/#pywhispercpp.constants.AVAILABLE_MODELS),
@@ -75,13 +76,9 @@ class Model:
         :param models_dir: The directory where the models are stored, or where they will be downloaded if they don't
                             exist, default to [MODELS_DIR](/pywhispercpp/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
         :param params_sampling_strategy: 0 -> GREEDY, else BEAM_SEARCH
-        :param log_level: logging level, set to INFO by default
         :param params: keyword arguments for different whisper.cpp parameters,
                         see [PARAMS_SCHEMA](/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA)
         """
-        # set logging level
-        set_log_level(log_level)
-
         if Path(model).is_file():
             self.model_path = model
         else:
@@ -129,10 +126,10 @@ class Model:
 
         # run inference
         start_time = time()
-        logging.info(f"Transcribing ...")
+        logger.info("Transcribing ...")
         res = self._transcribe(audio, n_processors=n_processors)
         end_time = time()
-        logging.info(f"Inference time: {end_time - start_time:.3f} s")
+        logger.info(f"Inference time: {end_time - start_time:.3f} s")
         return res
 
     @staticmethod
@@ -220,7 +217,7 @@ class Model:
         Private method to initialize the method from the bindings, it will be called automatically from the __init__
         :return:
         """
-        logging.info("Initializing the model ...")
+        logger.info("Initializing the model ...")
         self._ctx = pw.whisper_init_from_file(self.model_path)
         self._params = pw.whisper_full_default_params(pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY)
 
