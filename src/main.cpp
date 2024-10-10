@@ -273,7 +273,35 @@ float whisper_full_get_token_p_wrapper(struct whisper_context_wrapper * ctx, int
     return whisper_full_get_token_p(ctx->ptr, i_segment, i_token);
 }
 
+class WhisperFullParamsWrapper : public whisper_full_params {
+    std::string initial_prompt_str;   
+    std::string suppress_regex_str;      
+public:
+    WhisperFullParamsWrapper(const whisper_full_params& params = whisper_full_params())
+        : whisper_full_params(params),  
+        initial_prompt_str(params.initial_prompt ? params.initial_prompt : ""),
+        suppress_regex_str(params.suppress_regex ? params.suppress_regex : "") {
+        initial_prompt = initial_prompt_str.empty() ? nullptr : initial_prompt_str.c_str();
+        suppress_regex = suppress_regex_str.empty() ? nullptr : suppress_regex_str.c_str();
+    }
 
+    WhisperFullParamsWrapper(const WhisperFullParamsWrapper& other)
+        : WhisperFullParamsWrapper(static_cast<const whisper_full_params&>(other)) {}
+    
+    void set_initial_prompt(const std::string& prompt) {
+        initial_prompt_str = prompt;
+        initial_prompt = initial_prompt_str.c_str();
+    }
+
+    void set_suppress_regex(const std::string& regex) {
+        suppress_regex_str = regex;
+        suppress_regex = suppress_regex_str.c_str();
+    }
+};
+
+WhisperFullParamsWrapper  whisper_full_default_params_wrapper(enum whisper_sampling_strategy strategy) {
+    return WhisperFullParamsWrapper(whisper_full_default_params(strategy));
+}
 
 // callbacks mechanism
 
@@ -326,6 +354,7 @@ py::dict get_greedy(whisper_full_params * params){
     py::dict d("best_of"_a=params->greedy.best_of);
     return d;
 }
+
 PYBIND11_MODULE(_pywhispercpp, m) {
     m.doc() = R"pbdoc(
         Pywhispercpp: Python binding to whisper.cpp
@@ -456,54 +485,135 @@ PYBIND11_MODULE(_pywhispercpp, m) {
         .value("WHISPER_SAMPLING_BEAM_SEARCH", whisper_sampling_strategy::WHISPER_SAMPLING_BEAM_SEARCH)
         .export_values();
 
-    py::class_<whisper_full_params>(m,"whisper_full_params" /*,py::dynamic_attr()*/)
+    py::class_<whisper_full_params>(m, "__whisper_full_params__internal")
+        .def(py::init<>()) 
+        .def("__repr__", [](const whisper_full_params& self) {
+            std::ostringstream oss;
+            oss << "whisper_full_params("
+                << "strategy=" << self.strategy << ", "
+                << "n_threads=" << self.n_threads << ", "
+                << "n_max_text_ctx=" << self.n_max_text_ctx << ", "
+                << "offset_ms=" << self.offset_ms << ", "
+                << "duration_ms=" << self.duration_ms << ", "
+                << "translate=" << (self.translate ? "True" : "False") << ", "
+                << "no_context=" << (self.no_context ? "True" : "False") << ", "
+                << "no_timestamps=" << (self.no_timestamps ? "True" : "False") << ", "
+                << "single_segment=" << (self.single_segment ? "True" : "False") << ", "
+                << "print_special=" << (self.print_special ? "True" : "False") << ", "
+                << "print_progress=" << (self.print_progress ? "True" : "False") << ", "
+                << "print_realtime=" << (self.print_realtime ? "True" : "False") << ", "
+                << "print_timestamps=" << (self.print_timestamps ? "True" : "False") << ", "
+                << "token_timestamps=" << (self.token_timestamps ? "True" : "False") << ", "
+                << "thold_pt=" << self.thold_pt << ", "
+                << "thold_ptsum=" << self.thold_ptsum << ", "
+                << "max_len=" << self.max_len << ", "
+                << "split_on_word=" << (self.split_on_word ? "True" : "False") << ", "
+                << "max_tokens=" << self.max_tokens << ", "
+                << "debug_mode=" << (self.debug_mode ? "True" : "False") << ", "
+                << "audio_ctx=" << self.audio_ctx << ", "
+                << "tdrz_enable=" << (self.tdrz_enable ? "True" : "False") << ", "
+                << "suppress_regex=" << (self.suppress_regex ? self.suppress_regex : "None") << ", "
+                << "initial_prompt=" << (self.initial_prompt ? self.initial_prompt : "None") << ", "
+                << "prompt_tokens=" << (self.prompt_tokens ? "(whisper_token *)" : "None") << ", "
+                << "prompt_n_tokens=" << self.prompt_n_tokens << ", "
+                << "language=" << (self.language ? self.language : "None") << ", "
+                << "detect_language=" << (self.detect_language ? "True" : "False") << ", "
+                << "suppress_blank=" << (self.suppress_blank ? "True" : "False") << ", "
+                << "suppress_non_speech_tokens=" << (self.suppress_non_speech_tokens ? "True" : "False") << ", "
+                << "temperature=" << self.temperature << ", "
+                << "max_initial_ts=" << self.max_initial_ts << ", "
+                << "length_penalty=" << self.length_penalty << ", "
+                << "temperature_inc=" << self.temperature_inc << ", "
+                << "entropy_thold=" << self.entropy_thold << ", "
+                << "logprob_thold=" << self.logprob_thold << ", "
+                << "no_speech_thold=" << self.no_speech_thold << ", "
+                << "greedy={best_of=" << self.greedy.best_of << "}, "
+                << "beam_search={beam_size=" << self.beam_search.beam_size << ", patience=" << self.beam_search.patience << "}, "
+                << "new_segment_callback=" << (self.new_segment_callback ? "(function pointer)" : "None") << ", "
+                << "progress_callback=" << (self.progress_callback ? "(function pointer)" : "None") << ", "
+                << "encoder_begin_callback=" << (self.encoder_begin_callback ? "(function pointer)" : "None") << ", "
+                << "abort_callback=" << (self.abort_callback ? "(function pointer)" : "None") << ", "
+                << "logits_filter_callback=" << (self.logits_filter_callback ? "(function pointer)" : "None") << ", "
+                << "grammar_rules=" << (self.grammar_rules ? "(whisper_grammar_element **)" : "None") << ", "
+                << "n_grammar_rules=" << self.n_grammar_rules << ", "
+                << "i_start_rule=" << self.i_start_rule << ", "
+                << "grammar_penalty=" << self.grammar_penalty
+                << ")";
+            return oss.str();
+        });
+
+    py::class_<WhisperFullParamsWrapper, whisper_full_params>(m, "whisper_full_params")
         .def(py::init<>())
-        .def_readwrite("strategy", &whisper_full_params::strategy)
-        .def_readwrite("n_threads", &whisper_full_params::n_threads)
-        .def_readwrite("n_max_text_ctx", &whisper_full_params::n_max_text_ctx)
-        .def_readwrite("offset_ms", &whisper_full_params::offset_ms)
-        .def_readwrite("duration_ms", &whisper_full_params::duration_ms)
-        .def_readwrite("translate", &whisper_full_params::translate)
-        .def_readwrite("no_context", &whisper_full_params::no_context)
-        .def_readwrite("single_segment", &whisper_full_params::single_segment)
-        .def_readwrite("print_special", &whisper_full_params::print_special)
-        .def_readwrite("print_progress", &whisper_full_params::print_progress)
-        .def_readwrite("print_realtime", &whisper_full_params::print_realtime)
-        .def_readwrite("print_timestamps", &whisper_full_params::print_timestamps)
-        .def_readwrite("token_timestamps", &whisper_full_params::token_timestamps)
-        .def_readwrite("thold_pt", &whisper_full_params::thold_pt)
-        .def_readwrite("thold_ptsum", &whisper_full_params::thold_ptsum)
-        .def_readwrite("max_len", &whisper_full_params::max_len)
-        .def_readwrite("split_on_word", &whisper_full_params::split_on_word)
-        .def_readwrite("max_tokens", &whisper_full_params::max_tokens)
-        .def_readwrite("audio_ctx", &whisper_full_params::audio_ctx)
-        .def_readwrite("initial_prompt", &whisper_full_params::initial_prompt)
-        .def_readwrite("prompt_tokens", &whisper_full_params::prompt_tokens)
-        .def_readwrite("prompt_n_tokens", &whisper_full_params::prompt_n_tokens)
-        .def_property("language", [](whisper_full_params &self) {return py::str(self.language);},
-                                 [](whisper_full_params &self, const char *new_c) {char* c = (char *)malloc(sizeof(new_c));
-                                                                                    strcpy(c, new_c); self.language = c;})
-
-        .def_readwrite("suppress_blank", &whisper_full_params::suppress_blank)
-        .def_readwrite("suppress_non_speech_tokens", &whisper_full_params::suppress_non_speech_tokens)
-        .def_readwrite("temperature", &whisper_full_params::temperature)
-        .def_readwrite("max_initial_ts", &whisper_full_params::max_initial_ts)
-        .def_readwrite("length_penalty", &whisper_full_params::length_penalty)
-        .def_readwrite("temperature_inc", &whisper_full_params::temperature_inc)
-        .def_readwrite("entropy_thold", &whisper_full_params::entropy_thold)
-        .def_readwrite("logprob_thold", &whisper_full_params::logprob_thold)
-        .def_readwrite("no_speech_thold", &whisper_full_params::no_speech_thold)
+        .def_readwrite("strategy", &WhisperFullParamsWrapper::strategy)
+        .def_readwrite("n_threads", &WhisperFullParamsWrapper::n_threads)
+        .def_readwrite("n_max_text_ctx", &WhisperFullParamsWrapper::n_max_text_ctx)
+        .def_readwrite("offset_ms", &WhisperFullParamsWrapper::offset_ms)
+        .def_readwrite("duration_ms", &WhisperFullParamsWrapper::duration_ms)
+        .def_readwrite("translate", &WhisperFullParamsWrapper::translate)
+        .def_readwrite("no_context", &WhisperFullParamsWrapper::no_context)
+        .def_readwrite("single_segment", &WhisperFullParamsWrapper::single_segment)
+        .def_readwrite("print_special", &WhisperFullParamsWrapper::print_special)
+        .def_readwrite("print_progress", &WhisperFullParamsWrapper::print_progress)
+        .def_readwrite("print_realtime", &WhisperFullParamsWrapper::print_realtime)
+        .def_readwrite("print_timestamps", &WhisperFullParamsWrapper::print_timestamps)
+        .def_readwrite("token_timestamps", &WhisperFullParamsWrapper::token_timestamps)
+        .def_readwrite("thold_pt", &WhisperFullParamsWrapper::thold_pt)
+        .def_readwrite("thold_ptsum", &WhisperFullParamsWrapper::thold_ptsum)
+        .def_readwrite("max_len", &WhisperFullParamsWrapper::max_len)
+        .def_readwrite("split_on_word", &WhisperFullParamsWrapper::split_on_word)
+        .def_readwrite("max_tokens", &WhisperFullParamsWrapper::max_tokens)
+        .def_readwrite("audio_ctx", &WhisperFullParamsWrapper::audio_ctx)
+        .def_property("suppress_regex", 
+            [](WhisperFullParamsWrapper &self) {
+                return py::str(self.suppress_regex ? self.suppress_regex : "");
+            },
+            [](WhisperFullParamsWrapper &self, const std::string &new_c) {
+                self.set_suppress_regex(new_c);
+            })
+        .def_property("initial_prompt",
+        [](WhisperFullParamsWrapper &self) {
+                return py::str(self.initial_prompt ? self.initial_prompt : "");
+            },
+            [](WhisperFullParamsWrapper &self, const std::string &initial_prompt) {
+                self.set_initial_prompt(initial_prompt);
+            }
+        )
+        .def_readwrite("prompt_tokens", &WhisperFullParamsWrapper::prompt_tokens)
+        .def_readwrite("prompt_n_tokens", &WhisperFullParamsWrapper::prompt_n_tokens)
+        .def_property("language", 
+            [](WhisperFullParamsWrapper &self) { 
+                return py::str(self.language); 
+            },
+            [](WhisperFullParamsWrapper &self, const char *new_c) {// using lang_id let us avoid issues with memory management
+                const int lang_id = whisper_lang_id(new_c);
+                if (lang_id != -1) {
+                    self.language = whisper_lang_str(lang_id);    
+                } else {
+                    self.language = ""; //defaults to auto-detect
+                }
+            })
+        .def_readwrite("suppress_blank", &WhisperFullParamsWrapper::suppress_blank)
+        .def_readwrite("suppress_non_speech_tokens", &WhisperFullParamsWrapper::suppress_non_speech_tokens)
+        .def_readwrite("temperature", &WhisperFullParamsWrapper::temperature)
+        .def_readwrite("max_initial_ts", &WhisperFullParamsWrapper::max_initial_ts)
+        .def_readwrite("length_penalty", &WhisperFullParamsWrapper::length_penalty)
+        .def_readwrite("temperature_inc", &WhisperFullParamsWrapper::temperature_inc)
+        .def_readwrite("entropy_thold", &WhisperFullParamsWrapper::entropy_thold)
+        .def_readwrite("logprob_thold", &WhisperFullParamsWrapper::logprob_thold)
+        .def_readwrite("no_speech_thold", &WhisperFullParamsWrapper::no_speech_thold)
         // little hack for the internal stuct <undefined type issue>
-        .def_property("greedy", [](whisper_full_params &self) {return py::dict("best_of"_a=self.greedy.best_of);},
-                                 [](whisper_full_params &self, py::dict dict) {self.greedy.best_of = dict["best_of"].cast<int>();})
-        .def_property("beam_search", [](whisper_full_params &self) {return py::dict("beam_size"_a=self.beam_search.beam_size, "patience"_a=self.beam_search.patience);},
-                                [](whisper_full_params &self, py::dict dict) {self.beam_search.beam_size = dict["beam_size"].cast<int>(); self.beam_search.patience = dict["patience"].cast<float>();})
-        .def_readwrite("new_segment_callback_user_data", &whisper_full_params::new_segment_callback_user_data)
-        .def_readwrite("encoder_begin_callback_user_data", &whisper_full_params::encoder_begin_callback_user_data)
-        .def_readwrite("logits_filter_callback_user_data", &whisper_full_params::logits_filter_callback_user_data);
+        .def_property("greedy", [](WhisperFullParamsWrapper &self) {return py::dict("best_of"_a=self.greedy.best_of);},
+                                 [](WhisperFullParamsWrapper &self, py::dict dict) {self.greedy.best_of = dict["best_of"].cast<int>();})
+        .def_property("beam_search", [](WhisperFullParamsWrapper &self) {return py::dict("beam_size"_a=self.beam_search.beam_size, "patience"_a=self.beam_search.patience);},
+                                [](WhisperFullParamsWrapper &self, py::dict dict) {self.beam_search.beam_size = dict["beam_size"].cast<int>(); self.beam_search.patience = dict["patience"].cast<float>();})
+        .def_readwrite("new_segment_callback_user_data", &WhisperFullParamsWrapper::new_segment_callback_user_data)
+        .def_readwrite("encoder_begin_callback_user_data", &WhisperFullParamsWrapper::encoder_begin_callback_user_data)
+        .def_readwrite("logits_filter_callback_user_data", &WhisperFullParamsWrapper::logits_filter_callback_user_data);
 
 
-    m.def("whisper_full_default_params", &whisper_full_default_params);
+    py::implicitly_convertible<whisper_full_params, WhisperFullParamsWrapper>();
+    
+    m.def("whisper_full_default_params", &whisper_full_default_params_wrapper);
 
     m.def("whisper_full", &whisper_full_wrapper, "Run the entire model: PCM -> log mel spectrogram -> encoder -> decoder -> text\n"
                                                  "Uses the specified decoding strategy to obtain the text.\n");

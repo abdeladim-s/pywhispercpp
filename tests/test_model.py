@@ -5,6 +5,7 @@
 Test model.py
 """
 import unittest
+from pathlib import Path
 from unittest import TestCase
 
 from pywhispercpp.model import Model, Segment
@@ -12,13 +13,14 @@ from pywhispercpp.model import Model, Segment
 if __name__ == '__main__':
     pass
 
+WHISPER_CPP_DIR = Path(__file__).parent.parent / 'whisper.cpp'
 
 class TestModel(TestCase):
-    audio_file = '../whisper.cpp/samples/jfk.wav'
-    model = Model("tiny")
+    audio_file = WHISPER_CPP_DIR/ 'samples/jfk.wav'
+    model = Model("tiny", models_dir=str(WHISPER_CPP_DIR/'models'))
 
     def test_transcribe(self):
-        segments = self.model.transcribe(self.audio_file)
+        segments = self.model.transcribe(str(self.audio_file))
         return self.assertIsInstance(segments, list) and \
                self.assertIsInstance(segments[0], Segment) if len(segments) > 0 else True
 
@@ -35,7 +37,7 @@ class TestModel(TestCase):
         return self.assertIsInstance(av_langs, list) and self.assertGreater(len(av_langs), 1)
 
     def test__load_audio(self):
-        audio_arr = self.model._load_audio(self.audio_file)
+        audio_arr = self.model._load_audio(str(self.audio_file))
         return self.assertIsNotNone(audio_arr)
 
 
