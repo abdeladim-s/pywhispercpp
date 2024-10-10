@@ -1,3 +1,5 @@
+
+
 import _pywhispercpp as pw
 
 import unittest
@@ -29,13 +31,32 @@ class TestCAPI(TestCase):
         return self.assertEqual(params.language, 'de')
     
     def test_whisper_full_params_context(self):    
+    
         params = pw.whisper_full_params()
-        prompt = "A" + " test"
+        # to ensure that the string is not cached
+        prompt = str(10120923) + "A" + " test"
         params.initial_prompt = prompt
         print("Params Prompt: ", params.initial_prompt)
         del prompt
-        return self.assertEqual(params.initial_prompt, "A test")
-  
+        import gc
+        gc.collect()
+        return self.assertEqual(params.initial_prompt, str(10120923) + "A test")
+    
+    def test_whisper_full_params_regex(self):    
+        params = pw.whisper_full_params()
+        val = str(10120923) + "A" + " test"
+        params.suppress_regex = val
+        print("Params Prompt: ", params.suppress_regex)
+        del val
+        import gc
+        gc.collect()
+        return self.assertEqual(params.suppress_regex, str(10120923) + "A" + " test") 
+
+    def test_whisper_full_params_default(self):
+        params = pw.whisper_full_default_params(pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY)
+        self.assertIsInstance(params, pw.whisper_full_params)
+        self.assertEqual(params.suppress_regex, "")
+    
     def test_whisper_lang_id(self):
         return self.assertEqual(pw.whisper_lang_id('en'), 0)
     
@@ -45,4 +66,5 @@ class TestCAPI(TestCase):
 
 
 if __name__ == '__main__':
+    
     unittest.main()
