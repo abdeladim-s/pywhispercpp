@@ -477,15 +477,18 @@ PYBIND11_MODULE(_pywhispercpp, m) {
         .def_readwrite("split_on_word", &whisper_full_params::split_on_word)
         .def_readwrite("max_tokens", &whisper_full_params::max_tokens)
         .def_readwrite("audio_ctx", &whisper_full_params::audio_ctx)
-        .def_readwrite("initial_prompt", &whisper_full_params::initial_prompt)
+        .def_property("initial_prompt", [](whisper_full_params &self) { return py::str(self.initial_prompt ? self.initial_prompt : "");},
+                                        [string_wrapper = std::make_shared<std::shared_ptr<char>>(nullptr)](whisper_full_params &self, const std::string &new_c) {
+                                                *string_wrapper = std::shared_ptr<char>(strdup(new_c.c_str()), free);
+                                                self.initial_prompt = string_wrapper->get();
+                                            })
         .def_readwrite("prompt_tokens", &whisper_full_params::prompt_tokens)
         .def_readwrite("prompt_n_tokens", &whisper_full_params::prompt_n_tokens)
         .def_property("language", [](whisper_full_params &self) { return py::str(self.language ? self.language : "");},
                                   [string_wrapper = std::make_shared<std::shared_ptr<char>>(nullptr)](whisper_full_params &self, const std::string &new_c) {
                                         *string_wrapper = std::shared_ptr<char>(strdup(new_c.c_str()), free);
                                         self.language = string_wrapper->get();
-                                    }
-)
+                                    })
         .def_readwrite("suppress_blank", &whisper_full_params::suppress_blank)
         .def_readwrite("suppress_non_speech_tokens", &whisper_full_params::suppress_non_speech_tokens)
         .def_readwrite("temperature", &whisper_full_params::temperature)
