@@ -37,6 +37,13 @@ class TestCAPI(TestCase):
         del temp_string
         return self.assertEqual("es", whisper_params.language)
 
+    def test_whisper_full_default_params_language(self):
+        whisper_params = pw.whisper_full_default_params(pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY)
+        temp_string = "de"
+        whisper_params.language = temp_string  # Invoke the problematic setter again
+        del temp_string
+        return self.assertEqual("de", whisper_params.language)
+
 
 if __name__ == '__main__':
     unittest.main()
