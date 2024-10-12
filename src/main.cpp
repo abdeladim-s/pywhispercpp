@@ -480,10 +480,12 @@ PYBIND11_MODULE(_pywhispercpp, m) {
         .def_readwrite("initial_prompt", &whisper_full_params::initial_prompt)
         .def_readwrite("prompt_tokens", &whisper_full_params::prompt_tokens)
         .def_readwrite("prompt_n_tokens", &whisper_full_params::prompt_n_tokens)
-        .def_property("language", [](whisper_full_params &self) {return py::str(self.language);},
-                                 [](whisper_full_params &self, const char *new_c) {char* c = (char *)malloc(sizeof(new_c));
-                                                                                    strcpy(c, new_c); self.language = c;})
-
+        .def_property("language", [](whisper_full_params &self) { return py::str(self.language ? self.language : "");},
+                                  [string_wrapper = std::make_shared<std::shared_ptr<char>>(nullptr)](whisper_full_params &self, const std::string &new_c) {
+                                        *string_wrapper = std::shared_ptr<char>(strdup(new_c.c_str()), free);
+                                        self.language = string_wrapper->get();
+                                    }
+)
         .def_readwrite("suppress_blank", &whisper_full_params::suppress_blank)
         .def_readwrite("suppress_non_speech_tokens", &whisper_full_params::suppress_non_speech_tokens)
         .def_readwrite("temperature", &whisper_full_params::temperature)
