@@ -22,6 +22,21 @@ class TestCAPI(TestCase):
         params = pw.whisper_full_params()
         return self.assertIsInstance(params.n_threads, int)
 
+    def test_initial_prompt_param(self):
+        params = pw.whisper_full_params()
+        prompt = "A" + " test"
+        params.initial_prompt = prompt
+        del prompt
+        return self.assertEqual("A test", params.initial_prompt)
+
+    def test_language_param(self):
+        whisper_params = pw.whisper_full_params()
+        whisper_params.language = "en"  # This will invoke the problematic setter
+        temp_string = "es"
+        whisper_params.language = temp_string  # Invoke the problematic setter again
+        del temp_string
+        return self.assertEqual("es", whisper_params.language)
+
 
 if __name__ == '__main__':
     unittest.main()
