@@ -585,7 +585,7 @@ PYBIND11_MODULE(_pywhispercpp, m) {
                 return py::str(self.language); 
             },
             [](WhisperFullParamsWrapper &self, const char *new_c) {// using lang_id let us avoid issues with memory management
-                const int lang_id = whisper_lang_id(new_c);
+                const int lang_id = (new_c && strlen(new_c) > 0) ? whisper_lang_id(new_c) : -1;
                 if (lang_id != -1) {
                     self.language = whisper_lang_str(lang_id);    
                 } else {
