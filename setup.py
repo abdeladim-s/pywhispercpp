@@ -1,5 +1,6 @@
 import os
 import re
+import shutil
 import subprocess
 import sys
 from glob import glob
@@ -127,6 +128,9 @@ class CMakeBuild(build_ext):
         )
 
         self.copy_extensions_to_source()
+
+        # delete build_temp folder to fix windows dll
+        shutil.rmtree(self.build_temp)
 
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
