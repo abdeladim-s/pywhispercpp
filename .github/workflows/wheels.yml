@@ -61,6 +61,13 @@ jobs:
       with:
         python-version: '3.11'
 
+    # Install system dependencies
+    - name: Install system dependencies
+      if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y libc6
+
     - name: Install and Test Wheel
       run: |
         pip install pytest
