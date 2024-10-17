@@ -63,7 +63,8 @@ jobs:
 
     - name: Install and Test Wheel
       run: |
-        pip install wheelhouse/*.whl
+        pip install pytest
+        pip install --find-links=wheelhouse pywhispercpp
         pytest tests/
 
     - name: Upload wheels
