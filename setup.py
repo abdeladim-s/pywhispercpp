@@ -149,6 +149,8 @@ class CMakeBuild(build_ext):
         for file_path in shared_libs:
             filename = os.path.basename(file_path)
             self.copy_file(file_path, (dest_folder / filename).resolve())
+            # delete file
+            os.remove(file_path)
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
