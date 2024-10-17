@@ -1,7 +1,5 @@
-
-
+import pywhispercpp  # to load the shared libraries
 import _pywhispercpp as pw
-
 import unittest
 from unittest import TestCase
 

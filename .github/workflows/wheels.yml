@@ -56,6 +56,11 @@ jobs:
       run: git diff --exit-code
       shell: bash
 
+    - name: Install and Test Wheel
+      run: |
+        pip install wheelhouse/*.whl
+        pytest tests/
+
     - name: Upload wheels
       uses: actions/upload-artifact@v3
       with:
