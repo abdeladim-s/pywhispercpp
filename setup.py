@@ -29,6 +29,7 @@ class CMakeExtension(Extension):
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext: CMakeExtension) -> None:
+        shutil.rmtree(Path.cwd() / 'build', ignore_errors=True)
         # Must be in this form due to bug in .resolve() only fixed in Python 3.10+
         ext_fullpath = Path.cwd() / self.get_ext_fullpath(ext.name)  # type: ignore[no-untyped-call]
         extdir = ext_fullpath.parent.resolve()
