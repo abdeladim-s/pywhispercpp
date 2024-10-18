@@ -2,12 +2,12 @@ import os
 import re
 import subprocess
 import sys
-from glob import glob
 from pathlib import Path
+import subprocess
 
 from setuptools import Extension, setup, find_packages
 from setuptools.command.build_ext import build_ext
-
+from setuptools.command.bdist_wheel import bdist_wheel
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -25,6 +25,7 @@ class CMakeExtension(Extension):
         super().__init__(name, sources=[])
         self.sourcedir = os.fspath(Path(sourcedir).resolve())
 
+dll_folder = 'unset'
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext: CMakeExtension) -> None:
@@ -130,25 +131,45 @@ class CMakeBuild(build_ext):
 
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
-        # Copy the shared library to the lib folder
-        ext_fullpath = Path.cwd() / self.get_ext_fullpath(self.extensions[0].name)  # type: ignore[no-untyped-call]
-        extdir = ext_fullpath.parent.resolve()
-        so_files = os.path.join(extdir, '*.so*')
-        dylib_files = os.path.join(extdir, '*.dylib')
+        # store the dll folder in a global variable to use in repairwheel
+        global dll_folder
         cfg = "Debug" if self.debug else "Release"
-        dll_files = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg, "*.dll")
-        shared_libs =  glob(so_files) + glob(dll_files) + glob(dylib_files)
-        shared_libs = [f for f in shared_libs if not Path(f).name.startswith("_")] # exclude the extension itself
-        dest_folder = Path.cwd() / 'pywhispercpp' / 'lib'
-        if not dest_folder.resolve().exists():
-            dest_folder.mkdir(parents=True)
-        for file_path in shared_libs:
-            filename = os.path.basename(file_path)
-            self.copy_file(file_path, (dest_folder / filename).resolve())
+        dll_folder = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg)
+
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
 long_description = (this_directory / "README.md").read_text()
+
+
+class RepairWheel(bdist_wheel):
+    def run(self):
+        super().run()
+        if os.environ.get('CIBUILDWHEEL', '0') == '0' or sys.platform.startswith('win'):
+            # for linux and macos we use the default wheel repair command from cibuildwheel, for windows we need to do it manually as there is no repair command
+            self.repair_wheel()
+
+    def repair_wheel(self):
+        # on windows the dlls are in D:\a\pywhispercpp\pywhispercpp\build\temp.win-amd64-cpython-311\Release\_pywhispercpp\bin\Release\whisper.dll
+        global dll_folder
+        print("dll_folder in repairwheel",dll_folder) 
+        print("Files in dll_folder:", *Path(dll_folder).glob('*'))
+        #build\temp.win-amd64-cpython-311\Release\_pywhispercpp\bin\Release\whisper.dll
+       
+        wheel_path = next(Path(self.dist_dir).glob(f"{self.distribution.get_name()}*.whl"))
+        # Create a temporary directory for the repaired wheel
+        import tempfile
+        with tempfile.TemporaryDirectory(prefix='repaired_wheel_') as tmp_dir:
+            tmp_dir = Path(tmp_dir)
+            subprocess.call(['repairwheel', wheel_path, '-o', tmp_dir, '-l', dll_folder])
+            print("Repaired wheel: ", *tmp_dir.glob('*.whl'))
+            # We need to glob as repairwheel may change the name of the wheel 
+            # on linux from pywhispercpp-1.2.0-cp312-cp312-linux_aarch64.whl 
+            #            to pywhispercpp-1.2.0-cp312-cp312-manylinux_2_34_aarch64.whl
+            repaired_wheel = next(tmp_dir.glob("*.whl"))
+            self.copy_file(repaired_wheel, wheel_path)
+            print(f"Copied repaired wheel to: {wheel_path}")
+     
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
@@ -159,14 +180,15 @@ setup(
     description="Python bindings for whisper.cpp",
     long_description=long_description,
     ext_modules=[CMakeExtension("_pywhispercpp")],
-    cmdclass={"build_ext": CMakeBuild},
+    cmdclass={"build_ext": CMakeBuild,
+             'bdist_wheel': RepairWheel,},
     zip_safe=False,
     # extras_require={"test": ["pytest>=6.0"]},
     python_requires=">=3.8",
     packages=find_packages('.'),
     package_dir={'': '.'},
     include_package_data=True,
-    package_data={'pywhispercpp': ['lib/*']},
+    package_data={'pywhispercpp': []},
     long_description_content_type="text/markdown",
     license='MIT',
     entry_points={
@@ -182,4 +204,5 @@ setup(
     },
     install_requires=['numpy', "requests", "tqdm", "platformdirs"],
     extras_require={"examples": ["sounddevice", "webrtcvad"]},
+
 )
