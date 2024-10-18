@@ -145,6 +145,11 @@ long_description = (this_directory / "README.md").read_text()
 class RepairWheel(bdist_wheel):
     def run(self):
         super().run()
+        if os.environ.get('CIBUILDWHEEL', '0') == '0' or sys.platform.startswith('win'):
+            # for linux and macos we use the default wheel repair command from cibuildwheel, for windows we need to do it manually as there is no repair command
+            self.repair_wheel()
+
+    def repair_wheel(self):
         # on windows the dlls are in D:\a\pywhispercpp\pywhispercpp\build\temp.win-amd64-cpython-311\Release\_pywhispercpp\bin\Release\whisper.dll
         global dll_folder
         print("dll_folder in repairwheel",dll_folder) 

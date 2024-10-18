@@ -35,8 +35,6 @@ test-skip = ["*universal2:arm64"]
 # Setuptools bug causes collision between pypy and cpython artifacts
 before-build = "rm -rf {project}/build"
 
-#repair-wheel-command = "wheelrepair \"{wheel}\" -O build/ ; mv build/*.whl {wheel}" # TODO: figure out if this works alread after adding it to setup.py
- 
 [tool.ruff]
 extend-select = [
   "B",    # flake8-bugbear
