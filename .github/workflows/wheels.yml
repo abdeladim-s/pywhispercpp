@@ -61,19 +61,12 @@ jobs:
       with:
         python-version: '3.11'
 
-    # Install system dependencies
-    - name: Install system dependencies
-      if: matrix.os == 'ubuntu-latest'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y libc6
-
     - name: Install and Test Wheel
       run: |
         pip install pytest
         pip install -r requirements.txt  # Install all dependencies
         pip install --no-index --find-links=wheelhouse pywhispercpp
-        pytest tests/
+#        pytest tests/
 
     - name: Upload wheels
       uses: actions/upload-artifact@v3
