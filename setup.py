@@ -25,7 +25,7 @@ class CMakeExtension(Extension):
     def __init__(self, name: str, sourcedir: str = "") -> None:
         super().__init__(name, sources=[])
         self.sourcedir = os.fspath(Path(sourcedir).resolve())
-
+        shutil.rmtree(Path.cwd() / 'build', ignore_errors=True)
 
 class CMakeBuild(build_ext):
     def build_extension(self, ext: CMakeExtension) -> None:
@@ -35,7 +35,6 @@ class CMakeBuild(build_ext):
 
         # Using this requires trailing slash for auto-detection & inclusion of
         # auxiliary "native" libs
-
         debug = int(os.environ.get("DEBUG", 0)) if self.debug is None else self.debug
         cfg = "Debug" if debug else "Release"
 
@@ -150,7 +149,7 @@ class CMakeBuild(build_ext):
             filename = os.path.basename(file_path)
             self.copy_file(file_path, (dest_folder / filename).resolve())
             # delete file
-            os.remove(file_path)
+            # os.remove(file_path)
 
 # read the contents of your README file
 this_directory = Path(__file__).parent
