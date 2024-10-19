@@ -56,22 +56,48 @@ jobs:
       run: git diff --exit-code
       shell: bash
 
+    - name: Upload wheels
+      uses: actions/upload-artifact@v3
+      with:
+        path: wheelhouse/*.whl
+
+  test_wheels:
+    name: Test wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: build_wheels
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/download-artifact@v4
+      with:
+        name: artifact
+        path: wheelhouse
+
+    - name: Verify artifact download
+      run: |
+        ls -l wheelhouse
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.11'
 
+    - name: Checkout requirements.txt
+      uses: actions/checkout@v3
+      with:
+        working-directory: pywhispercpp
+
+    - name: Install dependencies
+      run: |
+        pip install -r pywhispercpp/requirements.txt
+        pip install pytest
+
     - name: Install and Test Wheel
       run: |
-        pip install pytest
-        pip install -r requirements.txt  # Install all dependencies
         pip install --no-index --find-links=wheelhouse pywhispercpp
-#        pytest tests/
-
-    - name: Upload wheels
-      uses: actions/upload-artifact@v3
-      with:
-        path: wheelhouse/*.whl
+        pytest pywhispercpp/tests/
 
 
   upload_all:
