@@ -70,7 +70,7 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
-    - uses: actions/download-artifact@v4
+    - uses: actions/download-artifact@v3
       with:
         name: artifact
         path: wheelhouse
