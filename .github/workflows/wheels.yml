@@ -70,6 +70,11 @@ jobs:
         os: [ubuntu-latest, windows-latest, macos-latest]
 
     steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - name: Download artifact
     - uses: actions/download-artifact@v3
       with:
         name: artifact
@@ -84,19 +89,17 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Checkout requirements.txt
-      uses: actions/checkout@v3
-      with:
-        working-directory: pywhispercpp
-
     - name: Install dependencies
       run: |
         pip install -r requirements.txt
         pip install pytest
 
-    - name: Install and Test Wheel
+    - name: Install Wheel
       run: |
         pip install --no-index --find-links=./wheelhouse pywhispercpp
+
+    - name: Run tests
+      run: |
         pytest tests/
 
 
