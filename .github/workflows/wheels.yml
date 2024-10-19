@@ -91,13 +91,13 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -r pywhispercpp/requirements.txt
+        pip install -r requirements.txt
         pip install pytest
 
     - name: Install and Test Wheel
       run: |
         pip install --no-index --find-links=wheelhouse pywhispercpp
-        pytest pywhispercpp/tests/
+        pytest tests/
 
 
   upload_all:
