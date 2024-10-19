@@ -66,6 +66,46 @@ jobs:
       with:
         path: wheelhouse/*.whl
 
+  test_wheels:
+    name: Test wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    needs: build_wheels
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        submodules: true
+
+    - uses: actions/download-artifact@v3
+      with:
+        name: artifact
+        path: wheelhouse
+
+    - name: Verify artifact download
+      run: |
+        ls -l wheelhouse
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        pip install -r requirements.txt
+        pip install pytest
+
+    - name: Install Wheel
+      run: |
+        pip install --no-index --find-links=./wheelhouse pywhispercpp
+
+    - name: Run tests
+      run: |
+        pytest tests/
+        
 
   upload_all:
     name: Upload if release
