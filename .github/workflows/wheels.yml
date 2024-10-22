@@ -51,7 +51,7 @@ jobs:
     - name: Build wheels
       run: python -m cibuildwheel --output-dir wheelhouse
       env:
-        CIBW_ARCHS_MACOS: auto universal2
+        CIBW_ARCHS: all
          # for windows setup.py repairwheel step should solve it
 
     - name: Verify clean directory
