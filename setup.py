@@ -1,3 +1,19 @@
+
+# This setup.py is used to build the pywhispercpp package.
+# The environment variables you may find interesting are:
+#
+# PYWHISPERCPP_VERSION 
+# if set, it will be used as the version number.
+#
+# GGML_VULKAN=1
+# if set, whisper.cpp will be build with vulkan support.
+#
+# WHISPER_COREML=1
+# WHISPER_COREML_ALLOW_FALLBACK=1
+# if set, whisper.cpp will be build with coreml support which requires special models
+# It is best used with WHISPER_COREML_ALLOW_FALLBACK=1
+
+
 import os
 import re
 import subprocess
@@ -169,13 +185,28 @@ class RepairWheel(bdist_wheel):
             repaired_wheel = next(tmp_dir.glob("*.whl"))
             self.copy_file(repaired_wheel, wheel_path)
             print(f"Copied repaired wheel to: {wheel_path}")
-     
+            
+def get_local_version() -> str:
+    try:
+        git_sha = subprocess.check_output(["git", "rev-parse", "HEAD"]).strip().decode("utf-8")
+        return f"+git{git_sha[:7]}"
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return ""
+    
+def get_version() -> str:
+    try:
+        return os.environ['PYWHISPERCPP_VERSION']
+    except KeyError:
+        pass
+    with open("version.txt") as f:
+        version = f.read().strip()
+    return f"{version}{get_local_version()}"
 
 # The information here can also be placed in setup.cfg - better separation of
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pywhispercpp",
-    version="1.2.0",
+    version=get_version(),
     author="abdeladim-s",
     description="Python bindings for whisper.cpp",
     long_description=long_description,
