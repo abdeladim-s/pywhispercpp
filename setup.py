@@ -67,6 +67,21 @@ class CMakeBuild(build_ext):
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
         ]
+        
+        # Platform-specific rpath settings
+        if sys.platform.startswith('darwin'):
+            # macOS-specific settings
+            cmake_args += [
+                "-DCMAKE_INSTALL_RPATH=@loader_path",
+                "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
+            ]
+        elif sys.platform.startswith('linux'):
+            # Linux-specific settings
+            cmake_args += [
+                "-DCMAKE_INSTALL_RPATH=$ORIGIN",
+                "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
+            ]
+
         build_args = []
         # Adding CMake arguments set as environment variable
         # (needed e.g. to build for ARM OSx on conda-forge)
@@ -119,7 +134,7 @@ class CMakeBuild(build_ext):
             archs = re.findall(r"-arch (\S+)", os.environ.get("ARCHFLAGS", ""))
             if archs:
                 cmake_args += ["-DCMAKE_OSX_ARCHITECTURES={}".format(";".join(archs))]
-
+            
         # Set CMAKE_BUILD_PARALLEL_LEVEL to control the parallel build level
         # across all generators.
         if "CMAKE_BUILD_PARALLEL_LEVEL" not in os.environ:
@@ -142,15 +157,25 @@ class CMakeBuild(build_ext):
         subprocess.run(
             ["cmake", "--build", ".", *build_args], cwd=build_temp, check=True
         )
-
-        self.copy_extensions_to_source()
-
-    def copy_extensions_to_source(self):
-        super().copy_extensions_to_source()
+    
         # store the dll folder in a global variable to use in repairwheel
         global dll_folder
         cfg = "Debug" if self.debug else "Release"
         dll_folder = os.path.join(self.build_temp, '_pywhispercpp', 'bin', cfg)
+        print("dll_folder in build_extension", dll_folder)
+        #self.copy_extensions_to_source()
+
+    def copy_extensions_to_source(self):
+        super().copy_extensions_to_source()
+       
+        if self.inplace:
+            build_lib = Path(self.build_lib)
+            for ext in self.extensions:
+                extdir = Path(self.get_ext_fullpath(ext.name)).parent.resolve()
+                # Assuming all shared libraries are in the same directory
+                shared_lib_files = [*build_lib.glob('**/*.dylib'), *build_lib.glob('**/*.so*')]
+                for shared_lib in shared_lib_files:
+                    self.copy_file(shared_lib, extdir)
 
 
 # read the contents of your README file
@@ -235,5 +260,4 @@ setup(
     },
     install_requires=['numpy', "requests", "tqdm", "platformdirs"],
     extras_require={"examples": ["sounddevice", "webrtcvad"]},
-
 )
