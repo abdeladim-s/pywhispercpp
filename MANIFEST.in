@@ -1,5 +1,18 @@
-include README.md LICENSE pybind11/LICENSE
+include README.md LICENSE pybind11/LICENSE version.txt
 graft pybind11/include
 graft pybind11/tools
 graft src
 global-include CMakeLists.txt *.cmake
+
+graft whisper.cpp/cmake
+graft whisper.cpp/ggml
+graft whisper.cpp/grammars
+graft whisper.cpp/include
+graft whisper.cpp/spm-headers
+graft whisper.cpp/src
+exclude whisper.cpp/**/*.o
+exclude whisper.cpp/**/*.so
+exclude whisper.cpp/**/*.a
+exclude whisper.cpp/**/*.dylib
+exclude whisper.cpp/**/*.dll
+exclude whisper.cpp/**/*.lib
