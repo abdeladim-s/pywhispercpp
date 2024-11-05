@@ -13,7 +13,6 @@ from time import time
 from typing import Union, Callable, List
 import _pywhispercpp as pw
 import numpy as np
-from pywhispercpp._logger import set_log_level
 import pywhispercpp.utils as utils
 import pywhispercpp.constants as constants
 import subprocess
