@@ -67,20 +67,20 @@ class CMakeBuild(build_ext):
             f"-DPYTHON_EXECUTABLE={sys.executable}",
             f"-DCMAKE_BUILD_TYPE={cfg}",  # not used on MSVC, but no harm
         ]
-        
-        # Platform-specific rpath settings
-        if sys.platform.startswith('darwin'):
-            # macOS-specific settings
-            cmake_args += [
-                "-DCMAKE_INSTALL_RPATH=@loader_path",
-                "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
-            ]
-        elif sys.platform.startswith('linux'):
-            # Linux-specific settings
-            cmake_args += [
-                "-DCMAKE_INSTALL_RPATH=$ORIGIN",
-                "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
-            ]
+        if self.editable_mode:
+            # Platform-specific rpath settings
+            if sys.platform.startswith('darwin'):
+                # macOS-specific settings
+                cmake_args += [
+                    "-DCMAKE_INSTALL_RPATH=@loader_path",
+                    "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
+                ]
+            elif sys.platform.startswith('linux'):
+                # Linux-specific settings
+                cmake_args += [
+                    "-DCMAKE_INSTALL_RPATH=$ORIGIN",
+                    "-DCMAKE_BUILD_WITH_INSTALL_RPATH=ON"
+                ]
 
         build_args = []
         # Adding CMake arguments set as environment variable
@@ -168,7 +168,7 @@ class CMakeBuild(build_ext):
     def copy_extensions_to_source(self):
         super().copy_extensions_to_source()
        
-        if self.inplace:
+        if self.editable_mode:
             build_lib = Path(self.build_lib)
             for ext in self.extensions:
                 extdir = Path(self.get_ext_fullpath(ext.name)).parent.resolve()
