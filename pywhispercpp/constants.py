@@ -4,7 +4,6 @@
 """
 Constants
 """
-import logging
 from pathlib import Path
 from typing import Tuple
 
@@ -21,9 +20,9 @@ MODELS_PREFIX_URL = "resolve/main/ggml"
 
 PACKAGE_NAME = 'pywhispercpp'
 
-LOGGIN_LEVEL = logging.INFO
 
 MODELS_DIR = Path(user_data_dir(PACKAGE_NAME)) / 'models'
+
 
 AVAILABLE_MODELS = [
                 "base",

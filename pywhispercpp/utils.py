@@ -12,6 +12,9 @@ from tqdm import tqdm
 from pywhispercpp.constants import MODELS_BASE_URL, MODELS_PREFIX_URL, AVAILABLE_MODELS, MODELS_DIR
 
 
+logger = logging.getLogger(__name__)
+
+
 def _get_model_url(model_name: str) -> str:
     """
     Returns the url of the `ggml` model
@@ -31,11 +34,11 @@ def download_model(model_name: str, download_dir=None, chunk_size=1024) -> str:
     :return: Absolute path of the downloaded model
     """
     if model_name not in AVAILABLE_MODELS:
-        logging.error(f"Invalid model name `{model_name}`, available models are: {AVAILABLE_MODELS}")
+        logger.error(f"Invalid model name `{model_name}`, available models are: {AVAILABLE_MODELS}")
         return
     if download_dir is None:
         download_dir = MODELS_DIR
-        logging.info(f"No download directory was provided, models will be downloaded to {download_dir}")
+        logger.info(f"No download directory was provided, models will be downloaded to {download_dir}")
 
     os.makedirs(download_dir, exist_ok=True)
 
@@ -43,7 +46,7 @@ def download_model(model_name: str, download_dir=None, chunk_size=1024) -> str:
     file_path = Path(download_dir) / os.path.basename(url)
     # check if the file is already there
     if file_path.exists():
-        logging.info(f"Model {model_name} already exists in {download_dir}")
+        logger.info(f"Model {model_name} already exists in {download_dir}")
     else:
         # download it from huggingface
         resp = requests.get(url, stream=True)
@@ -60,7 +63,7 @@ def download_model(model_name: str, download_dir=None, chunk_size=1024) -> str:
                 for data in resp.iter_content(chunk_size=chunk_size):
                     size = file.write(data)
                     progress_bar.update(size)
-            logging.info(f"Model downloaded to {file_path.absolute()}")
+            logger.info(f"Model downloaded to {file_path.absolute()}")
         except Exception as e:
             # error download, just remove the file
             os.remove(file_path)
