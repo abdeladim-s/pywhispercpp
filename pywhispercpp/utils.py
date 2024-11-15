@@ -4,8 +4,10 @@
 """
 Helper functions
 """
+import contextlib
 import logging
 import os
+import sys
 from pathlib import Path
 import requests
 from tqdm import tqdm
@@ -180,3 +182,33 @@ def output_csv(segments: list, output_file_path: str) -> str:
         for seg in segments:
             file.write(f"{10 * seg.t0}, {10 * seg.t1}, \"{seg.text}\"\n")
     return absolute_path
+
+
+@contextlib.contextmanager
+def redirect_stderr(to=None) -> None:
+    """
+    helper function to redirect stderr logs
+
+    :param to:  sys.stdout, sys.stderr, file path or None to redirect to devnull
+    :return: None
+    """
+    sys.stderr.flush()
+    original_stderr_fd = sys.stderr.fileno()
+    if to is None:
+        target_fd = os.open(os.devnull, os.O_WRONLY)
+    elif isinstance(to, str):
+        file = open(to, 'w')
+        target_fd = file.fileno()
+    elif hasattr(to, 'fileno'):
+        target_fd = to.fileno()
+    else:
+        raise ValueError("Invalid `to` parameter; must be None, a filepath string, or sys.stdout/sys.stderr.")
+    os.dup2(target_fd, original_stderr_fd)
+    try:
+        yield
+    finally:
+        os.dup2(original_stderr_fd, original_stderr_fd)
+        if isinstance(to, str):
+            file.close()
+        elif to is None:
+            os.close(target_fd)

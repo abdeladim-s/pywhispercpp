@@ -8,9 +8,10 @@ This module contains a simple Python API on-top of the C-style
 import importlib.metadata
 import logging
 import shutil
+import sys
 from pathlib import Path
 from time import time
-from typing import Union, Callable, List
+from typing import Union, Callable, List, TextIO
 import _pywhispercpp as pw
 import numpy as np
 import pywhispercpp.utils as utils
@@ -19,19 +20,19 @@ import subprocess
 import os
 import tempfile
 
-
 __author__ = "abdeladim-s"
 __copyright__ = "Copyright 2023, "
 __license__ = "MIT"
 __version__ = importlib.metadata.version('pywhispercpp')
 
-
 logger = logging.getLogger(__name__)
+
 
 class Segment:
     """
     A small class representing a transcription segment
     """
+
     def __init__(self, t0: int, t1: int, text: str):
         """
         :param t0: start time
@@ -68,6 +69,7 @@ class Model:
                  model: str = 'tiny',
                  models_dir: str = None,
                  params_sampling_strategy: int = 0,
+                 redirect_whispercpp_logs_to: Union[TextIO, str, None] = sys.stderr,
                  **params):
         """
         :param model: The name of the model, one of the [AVAILABLE_MODELS](/pywhispercpp/#pywhispercpp.constants.AVAILABLE_MODELS),
@@ -75,6 +77,7 @@ class Model:
         :param models_dir: The directory where the models are stored, or where they will be downloaded if they don't
                             exist, default to [MODELS_DIR](/pywhispercpp/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
         :param params_sampling_strategy: 0 -> GREEDY, else BEAM_SEARCH
+        :param redirect_whispercpp_logs_to: where to redirect the whisper.cpp logs, default to sys.stderr, accepts file path, stdout, stderr or use None to disable
         :param params: keyword arguments for different whisper.cpp parameters,
                         see [PARAMS_SCHEMA](/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA)
         """
@@ -86,10 +89,11 @@ class Model:
         self._sampling_strategy = pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY if params_sampling_strategy == 0 else \
             pw.whisper_sampling_strategy.WHISPER_SAMPLING_BEAM_SEARCH
         self._params = pw.whisper_full_default_params(self._sampling_strategy)
-        # init the model
-        self._init_model()
         # assign params
         self._set_params(params)
+        self.redirect_whispercpp_logs_to = redirect_whispercpp_logs_to
+        # init the model
+        self._init_model()
 
     def transcribe(self,
                    media: Union[str, np.ndarray],
@@ -217,8 +221,9 @@ class Model:
         :return:
         """
         logger.info("Initializing the model ...")
-        self._ctx = pw.whisper_init_from_file(self.model_path)
-        self._params = pw.whisper_full_default_params(pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY)
+        with utils.redirect_stderr(to=self.redirect_whispercpp_logs_to):
+            self._ctx = pw.whisper_init_from_file(self.model_path)
+            self._params = pw.whisper_full_default_params(pw.whisper_sampling_strategy.WHISPER_SAMPLING_GREEDY)
 
     def _set_params(self, kwargs: dict) -> None:
         """
@@ -269,6 +274,7 @@ class Model:
         :param media_file_path: Path of the media file
         :return: Numpy array
         """
+
         def wav_to_np(file_path):
             with open(file_path, 'rb') as f:
                 f.read(44)
@@ -281,7 +287,8 @@ class Model:
             return wav_to_np(media_file_path)
         else:
             if shutil.which('ffmpeg') is None:
-                raise Exception("FFMPEG is not installed or not in PATH. Please install it, or provide a WAV file or a NumPy array instead!")
+                raise Exception(
+                    "FFMPEG is not installed or not in PATH. Please install it, or provide a WAV file or a NumPy array instead!")
 
             temp_file = tempfile.NamedTemporaryFile(suffix=".wav", delete=False)
             temp_file_path = temp_file.name
@@ -301,5 +308,3 @@ class Model:
         :return: None
         """
         pw.whisper_free(self._ctx)
-
-
