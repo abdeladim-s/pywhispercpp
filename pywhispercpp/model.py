@@ -69,7 +69,7 @@ class Model:
                  model: str = 'tiny',
                  models_dir: str = None,
                  params_sampling_strategy: int = 0,
-                 redirect_whispercpp_logs_to: Union[TextIO, str, None] = sys.stderr,
+                 redirect_whispercpp_logs_to: Union[bool, TextIO, str, None] = False,
                  **params):
         """
         :param model: The name of the model, one of the [AVAILABLE_MODELS](/pywhispercpp/#pywhispercpp.constants.AVAILABLE_MODELS),
@@ -77,7 +77,7 @@ class Model:
         :param models_dir: The directory where the models are stored, or where they will be downloaded if they don't
                             exist, default to [MODELS_DIR](/pywhispercpp/#pywhispercpp.constants.MODELS_DIR) <user_data_dir/pywhsipercpp/models>
         :param params_sampling_strategy: 0 -> GREEDY, else BEAM_SEARCH
-        :param redirect_whispercpp_logs_to: where to redirect the whisper.cpp logs, default to sys.stderr, accepts file path, stdout, stderr or use None to disable
+        :param redirect_whispercpp_logs_to: where to redirect the whisper.cpp logs, default to False (no redirection), accepts str file path, sys.stdout, sys.stderr, or use None to redirect to devnull
         :param params: keyword arguments for different whisper.cpp parameters,
                         see [PARAMS_SCHEMA](/pywhispercpp/#pywhispercpp.constants.PARAMS_SCHEMA)
         """

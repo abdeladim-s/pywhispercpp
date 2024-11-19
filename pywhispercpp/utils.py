@@ -185,30 +185,61 @@ def output_csv(segments: list, output_file_path: str) -> str:
 
 
 @contextlib.contextmanager
-def redirect_stderr(to=None) -> None:
+def redirect_stderr(to=False) -> None:
     """
-    helper function to redirect stderr logs
+    Redirect stderr to the specified target.
 
-    :param to:  sys.stdout, sys.stderr, file path or None to redirect to devnull
-    :return: None
+    :param to:
+        - None to suppress output (redirect to devnull),
+        - sys.stdout to redirect to stdout,
+        - A file path (str) to redirect to a file,
+        - False to do nothing (no redirection).
     """
-    sys.stderr.flush()
-    original_stderr_fd = sys.stderr.fileno()
-    if to is None:
-        target_fd = os.open(os.devnull, os.O_WRONLY)
-    elif isinstance(to, str):
-        file = open(to, 'w')
-        target_fd = file.fileno()
-    elif hasattr(to, 'fileno'):
-        target_fd = to.fileno()
-    else:
-        raise ValueError("Invalid `to` parameter; must be None, a filepath string, or sys.stdout/sys.stderr.")
-    os.dup2(target_fd, original_stderr_fd)
-    try:
+
+    if to is False:
+        # do nothing
         yield
-    finally:
-        os.dup2(original_stderr_fd, original_stderr_fd)
-        if isinstance(to, str):
-            file.close()
-        elif to is None:
-            os.close(target_fd)
+        return
+
+    sys.stderr.flush()
+    try:
+        original_stderr_fd = sys.stderr.fileno()
+        has_fileno = True
+    except (AttributeError, OSError):
+        # Jupyter or non-standard stderr implementations
+        has_fileno = False
+
+    if has_fileno:
+        if to is None:
+            target_fd = os.open(os.devnull, os.O_WRONLY)
+        elif isinstance(to, str):
+            file = open(to, 'w')
+            target_fd = file.fileno()
+        elif hasattr(to, 'fileno'):
+            target_fd = to.fileno()
+        else:
+            raise ValueError("Invalid `to` parameter; must be None, a filepath string, or sys.stdout/sys.stderr.")
+        os.dup2(target_fd, original_stderr_fd)
+        try:
+            yield
+        finally:
+            os.dup2(original_stderr_fd, original_stderr_fd)
+            if isinstance(to, str):
+                file.close()
+            elif to is None:
+                os.close(target_fd)
+    else:
+        # Replace sys.stderr directly
+        original_stderr = sys.stderr
+        if to is None:
+            sys.stderr = open(os.devnull, 'w')
+        elif isinstance(to, str):
+            sys.stderr = open(to, 'w')
+        elif hasattr(to, 'write'):
+            sys.stderr = to
+        try:
+            yield
+        finally:
+            sys.stderr = original_stderr
+            if isinstance(to, str) or to is None:
+                sys.stderr.close()
