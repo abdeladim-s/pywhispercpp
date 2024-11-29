@@ -231,7 +231,6 @@ def get_version() -> str:
 # logic and declaration, and simpler if you include description/version in a file.
 setup(
     name="pywhispercpp",
-    version=get_version(),
     author="abdeladim-s",
     description="Python bindings for whisper.cpp",
     long_description=long_description,
